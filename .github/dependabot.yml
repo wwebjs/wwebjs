@@ -1,0 +1,23 @@
+version: 2
+updates:
+  - package-ecosystem: 'pnpm'
+    directory: '/'
+    # Run monthly to reduce noise
+    schedule:
+      interval: 'monthly'
+      # optional: time: "04:00"
+    # Limit open PRs from Dependabot
+    open-pull-requests-limit: 10
+    # Create separate PRs per dependency to make review easier
+    # Only propose updates for direct dependencies declared in package.json
+    allow:
+      - dependency-type: 'direct'
+    # Add labels so workflows can detect dependabot PRs
+    labels:
+      - 'dependencies'
+      - 'dependabot'
+    # Prefix for commit messages
+    commit-message:
+      prefix: 'chore(deps)'
+    # Target branch for PRs
+    target-branch: 'main'
