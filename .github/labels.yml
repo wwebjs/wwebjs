@@ -1,0 +1,81 @@
+# Type Labels
+- name: bug
+  color: d73a4a
+- name: feature request
+  color: a2eeef
+- name: enhancement
+  color: 84b6eb
+- name: chore
+  color: fef2c0
+
+# Status Labels
+- name: in progress
+  color: fbca04
+- name: in review
+  color: 0e8a16
+- name: merge ready
+  color: 0e8a16
+- name: blocked
+  color: b60205
+- name: discussion
+  color: d876e3
+
+# Priority & Help
+- name: good first issue
+  color: 7057ff
+- name: help wanted
+  color: 008672
+
+# Resolution
+- name: duplicate
+  color: cfd3d7
+- name: invalid
+  color: e4e669
+- name: wontfix
+  color: ffffff
+
+# Technical Areas
+- name: api changes
+  color: 5319e7
+- name: api support
+  color: 5319e7
+- name: dependencies
+  color: 0366d6
+- name: dependabot
+  color: 0366d6
+- name: security
+  color: ee0701
+- name: performance
+  color: ff6b6b
+- name: error handling
+  color: f9d0c4
+- name: typings
+  color: 1d76db
+- name: interactions
+  color: c5def5
+
+# Code & Build
+- name: tests
+  color: bfd4f2
+- name: build
+  color: 0075ca
+- name: ci
+  color: 0075ca
+- name: infra
+  color: d4c5f9
+- name: styles
+  color: ffc0cb
+- name: ui
+  color: ffaad4
+- name: utility
+  color: ededed
+
+# Packages & Apps
+- name: packages:core
+  color: 5663e9
+- name: apps:guide
+  color: 2e7d32
+- name: apps:website
+  color: 2e7d32
+- name: apps:docs
+  color: 2e7d32
