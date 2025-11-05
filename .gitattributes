@@ -1,0 +1,7 @@
+# File types
+* text=auto eol=lf
+pnpm-lock.yaml linguist-generated=true text=auto eol=lf
+
+# Binaries
+*.png binary
+*.jpg binary
