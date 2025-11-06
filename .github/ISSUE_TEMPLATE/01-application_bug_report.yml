@@ -8,7 +8,7 @@ body:
         **This issue form is for apps like website, documentation or guide**
 
         Thanks for taking the time to report a bug! Please check the [issue tracker](https://github.com/wwebjs/wwebjs/issues) before submitting.
-        
+
   - type: dropdown
     id: app
     attributes:
@@ -19,7 +19,7 @@ body:
         - guide
     validations:
       required: true
-      
+
   - type: dropdown
     id: priority
     attributes:
@@ -32,7 +32,7 @@ body:
       default: 1
     validations:
       required: true
-      
+
   - type: textarea
     id: description
     attributes:
@@ -42,7 +42,7 @@ body:
         Example: The search function on the docs page returns no results when searching for "authentication"...
     validations:
       required: true
-      
+
   - type: textarea
     id: reproduction_steps
     attributes:
@@ -55,7 +55,7 @@ body:
         4. See no results displayed
     validations:
       required: true
-      
+
   - type: input
     id: url
     attributes:
@@ -64,7 +64,7 @@ body:
       placeholder: https://wwebjs.dev/docs/getting-started
     validations:
       required: false
-      
+
   - type: textarea
     id: expected_behavior
     attributes:
@@ -73,7 +73,7 @@ body:
       placeholder: The search should display relevant documentation pages...
     validations:
       required: false
-      
+
   - type: textarea
     id: screenshots
     attributes:
@@ -82,7 +82,7 @@ body:
       placeholder: Drag and drop images here or paste them directly.
     validations:
       required: false
-      
+
   - type: textarea
     id: environment
     attributes:
@@ -96,7 +96,7 @@ body:
       render: markdown
     validations:
       required: false
-      
+
   - type: textarea
     id: console_errors
     attributes:
@@ -105,7 +105,7 @@ body:
       render: javascript
     validations:
       required: false
-      
+
   - type: checkboxes
     id: checklist
     attributes:

@@ -1,4 +1,4 @@
-name: "PR Triage"
+name: 'PR Triage'
 
 on:
   pull_request_target:
