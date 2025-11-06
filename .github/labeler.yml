@@ -1,0 +1,23 @@
+# Packages
+packages:core:
+  - changed-files:
+      - any-glob-to-any-file:
+          - packages/core/*
+          - packages/core/**/*
+
+# Apps
+apps:guide:
+  - changed-files:
+      - any-glob-to-any-file:
+          - apps/guide/*
+          - apps/guide/**/*
+apps:website:
+  - changed-files:
+      - any-glob-to-any-file:
+          - apps/website/*
+          - apps/website/**/*
+apps:docs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - apps/docs/*
+          - apps/docs/**/*
