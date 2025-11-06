@@ -20,6 +20,7 @@ coverage
 
 # Build output
 dist/
+.next/
 *.tgz
 
 # Environment
