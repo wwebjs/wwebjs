@@ -33,6 +33,7 @@ yarn.lock
 # Cache
 .eslintcache
 *.tsbuildinfo
+.turbo/
 
 # OS
 .DS_Store

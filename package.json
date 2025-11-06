@@ -4,7 +4,6 @@
   "version": "0.0.0",
   "private": true,
   "description": "A WhatsApp Web client for NodeJS",
-  "scripts": {},
   "keywords": [
     "whatsapp",
     "whatsapp-web",
@@ -21,6 +20,33 @@
     "url": "git+https://github.com/wwebjs/wwebjs.git"
   },
   "type": "module",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint -- --fix",
+    "prepare": "husky",
+    "test": "turbo run test",
+    "type-check": "turbo run type-check"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
+    "@eslint/js": "^9.39.1",
+    "@types/node": "^24.10.0",
+    "conventional-changelog-angular": "^8.1.0",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^16.5.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6",
+    "prettier": "^3.6.2",
+    "prettier-plugin-packagejson": "^2.5.19",
+    "turbo": "^2.6.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.3"
   },
   "packageManager": "pnpm@10.20.0",
   "engines": {
