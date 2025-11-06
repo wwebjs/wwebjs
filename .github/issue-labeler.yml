@@ -1,0 +1,38 @@
+bug:
+  - '(?i)(\bbug\b|error|exception|crash|not working|fails)'
+
+feature request:
+  - '(?i)(feature|enhancement|request|add support|new capability)'
+
+security:
+  - '(?i)(security|vulnerability|cve|xss|csrf|rce)'
+
+dependencies:
+  - '(?i)(dependabot|bump dependency|update dependency|outdated package)'
+
+performance:
+  - '(?i)(performance|slow|optimi[sz]e|latency|throughput)'
+
+typings:
+  - '(?i)(typescript|ts error|type error|typings|d\.ts)'
+
+documentation:
+  - '(?i)(docs|documentation|readme|guide)'
+
+api changes:
+  - '(?i)(api change|breaking|deprecat(e|ion))'
+
+api support:
+  - '(?i)(how to use api|api usage|api question)'
+
+apps:docs:
+  - '(?i)(documentation site|docs site|docs page|mdx)'
+
+apps:website:
+  - '(?i)(website|site|landing page)'
+
+apps:guide:
+  - '(?i)(guide|tutorial|how-to)'
+
+packages:core:
+  - '(?i)(core package|@wwebjs/core|core module)'
