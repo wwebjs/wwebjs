@@ -1,0 +1,106 @@
+name: Bug report
+description: Report a bug in the library or another package
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **This issue form is for packages like whatsapp-web.js**
+
+        Thanks for taking the time to report a bug! Please check the [issue tracker](https://github.com/wwebjs/wwebjs/issues) before submitting.
+
+  - type: dropdown
+    id: package
+    attributes:
+      label: Which package is this bug report for?
+      options:
+        - core
+        - whatsapp-web.js
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Issue priority
+      description: Be realistic. Elaborate in the description if needed.
+      options:
+        - Low (slightly annoying)
+        - Medium (should be fixed soon)
+        - High (immediate attention needed)
+      default: 1
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Issue description
+      description: Provide a clear and concise description of the problem.
+      placeholder: |
+        Example: When I try to send a message, the client disconnects unexpectedly...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction_steps
+    attributes:
+      label: Steps to reproduce
+      description: How can we reproduce this issue?
+      placeholder: |
+        Steps to reproduce with below code sample:
+        1. Do this
+        2. Do that
+        3. ...
+        9. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: code_sample
+    attributes:
+      label: Code sample
+      description: |
+        Provide code that reproduces the bug. Ensure it is:
+        - **Minimal** - Only essential code to show the issue
+        - **Complete** - Include all dependencies and setup
+        - **Tested** - Verify it actually triggers the problem
+
+        Will be auto-formatted - no backticks needed.
+      render: typescript
+    validations:
+      required: false
+
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: Expected behavior
+      description: What should happen instead?
+      placeholder: The message should be sent successfully without disconnecting...
+    validations:
+      required: false
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: |
+        Please provide relevant environment details:
+      placeholder: |
+        - OS: Windows 11
+        - Node.js: v20.10.0
+        - Package version: v1.23.0
+        - Browser: Chrome 120
+      render: markdown
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues and confirmed this is not a duplicate
+          required: true
+        - label: I have verified this is a library issue, not a problem with my code
+          required: true

@@ -1,0 +1,48 @@
+# Configuration for issues
+issues:
+  # Number of days of inactivity before an issue becomes stale
+  daysUntilStale: 30
+  # Number of days of inactivity before a stale issue is closed
+  daysUntilClose: 7
+  # Issues with these labels will never be considered stale
+  exemptLabels:
+    - bug
+    - feature request
+    - enhancement
+    - security
+    - in progress
+    - blocked
+    - api changes
+    - api support
+  # Label to use when marking as stale
+  staleLabel: stale
+  # Comment to post when marking as stale
+  markComment: >
+    This issue has been automatically marked as stale because it has not had
+    recent activity. It will be closed if no further activity occurs. Thank you
+    for your contributions.
+  # Comment to post when closing
+  closeComment: false
+
+# Configuration for pull requests
+pulls:
+  # Number of days of inactivity before a PR becomes stale
+  daysUntilStale: 60
+  # Number of days of inactivity before a stale PR is closed
+  daysUntilClose: 14
+  # PRs with these labels will never be considered stale
+  exemptLabels:
+    - in progress
+    - in review
+    - merge ready
+    - blocked
+    - security
+  # Label to use when marking as stale
+  staleLabel: stale
+  # Comment to post when marking as stale
+  markComment: >
+    This pull request has been automatically marked as stale because it has not had
+    recent activity. It will be closed if no further activity occurs. Thank you
+    for your contributions.
+  # Comment to post when closing
+  closeComment: false
