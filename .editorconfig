@@ -1,0 +1,21 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# Top-most EditorConfig file
+root = true
+
+# Defaults for all files
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+# Markdown (trailing spaces can be meaningful)
+[*.md]
+trim_trailing_whitespace = false
+
+# Package lock files (do not modify)
+[{package-lock.json,pnpm-lock.yaml,yarn.lock}]
+insert_final_newline = false
