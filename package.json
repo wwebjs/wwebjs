@@ -1,10 +1,10 @@
 {
+  "$schema": "https://json.schemastore.org/package.json",
   "name": "wwebjs",
   "version": "0.0.0",
   "private": true,
   "description": "A WhatsApp Web client for NodeJS",
   "scripts": {},
-  "type": "module",
   "keywords": [
     "whatsapp",
     "whatsapp-web",
@@ -12,17 +12,19 @@
     "bot",
     "client"
   ],
+  "homepage": "https://github.com/wwebjs/wwebjs#readme",
+  "bugs": {
+    "url": "https://github.com/wwebjs/wwebjs/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wwebjs/wwebjs.git"
   },
-  "bugs": {
-    "url": "https://github.com/wwebjs/wwebjs/issues"
+  "type": "module",
   },
-  "homepage": "https://github.com/wwebjs/wwebjs#readme",
+  "packageManager": "pnpm@10.20.0",
   "engines": {
     "node": ">=22.12.0",
     "pnpm": ">=10.20.0"
-  },
-  "packageManager": "pnpm@10.20.0"
+  }
 }
