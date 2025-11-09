@@ -1,0 +1,48 @@
+import { Callout } from 'nextra/components';
+import Badge from '../../components/Badge';
+
+<br />
+
+<Callout type="warning">
+  This Page is currently still in **development**, there may be broken links and incomplete
+  information.
+</Callout>
+
+<br />
+
+# Introduction
+
+WWebJS (also known as `whatsapp-web.js`) is a powerful Node.js library that allows developers to interact with WhatsApp Web directly. It enables the creation of automation tools by simulating a WhatsApp Web client and exposing its core features to your application.
+
+## Why use WWebJS?
+
+WWebJS is designed to be easy to use and simple to integrate into existing projects. Its high-level API abstracts the complexities of WhatsApp Web, allowing developers to focus on building their applications without worrying about the underlying implementation details.
+
+## Why We Built It
+
+We created WWebJS to make it easier and more reliable for developers to work with WhatsApp Web. By combining the power of Puppeteer with WhatsApp’s browser-based interface, our goal was to simplify the process of creating bots and automation tools, without the hassle or high risk of being blocked.
+
+We also want to express our appreciation to <Badge variant="yellow">Meta</Badge> for creating and maintaining such an incredible platform. Thanks to WhatsApp Web, we’ve been able to build an API that supports countless creative and practical projects, from delivery services and AI chatbots to emergency communication systems and so much more. ❤️
+
+Messaging platforms like <Badge variant="green">WhatsApp</Badge> <Badge variant="blue">Facebook</Badge> and <Badge variant="purple">Discord</Badge> are central to modern communication, and we wanted to help developers build tools that integrate with these services more easily. With WWebJS, you don’t need to invest in expensive APIs or services, just dive in and start building. 🎉
+
+Another key reason behind WWebJS is the lack of an accessible, feature-rich official API. We hope that by demonstrating what’s possible, this project encourages <Badge variant="green">WhatsApp</Badge> to enhance and expand their official API for everyone, empowering developers and organizations to build safe, innovative, and connected solutions.
+
+## How it Works
+
+WWebJS operates by leveraging the WhatsApp Web interface, the web-based version of WhatsApp that runs in a browser. It launches WhatsApp Web inside a managed Puppeteer session, using a headless browser to mimic user interactions.
+
+Through this setup, the library hooks into the page and calls internal WhatsApp Web functions directly, enabling developers to send and receive messages, manage contacts, and perform other actions as if they were manually using the application.
+
+By controlling the browser context and handling authentication and session management, WWebJS replicates real user behavior while minimizing the risk of being blocked. This approach gives developers programmatic access to nearly the full feature set of WhatsApp Web, making it a powerful tool for automation and integration.
+
+## Disclaimer
+
+<Callout type="error">
+  This is an unofficial project and is not affiliated with or endorsed by **WhatsApp** or **Meta
+  Platforms**!
+</Callout>
+
+By using this project, you acknowledge that you understand and accept all of the above terms, limitations, and potential risks, including the possibility of account suspension or banning.
+
+You can learn more about the risks of using WWebJS in our [FAQ](https://wwebjs.dev/faq/#is-it-safe-to-use-whatsapp-webjs) or by reading the full [Disclaimer](./disclaimer.mdx) here.

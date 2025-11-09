@@ -1,19 +1,45 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "jsx": "preserve",
-    "allowJs": false,
-    "noEmit": true,
     "baseUrl": ".",
-    "paths": {},
+    "target": "es2022",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
     "incremental": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "module": "esnext",
+    "resolveJsonModule": true,
+    "paths": {
+      "@components/*": ["components/*"],
+      "private-next-root-dir/*": ["./*"],
+      "next-mdx-import-source-file": ["mdx-components.js"]
+    },
     "plugins": [
       {
         "name": "next"
       }
-    ]
+    ],
+    "strictNullChecks": true,
+    "noUncheckedIndexedAccess": true
   },
-  "include": ["**/*.ts", "**/*.tsx", "next-env.d.ts", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "src/content/_meta.js",
+    "src/app/_meta.ts",
+    "src/content/discover/_meta.ts",
+    "src/app/docs/[[...mdxPath]]/page.tsx",
+    "mdx-components.js"
+  ],
+  "exclude": ["node_modules", ".next"]
 }
