@@ -1,73 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
 import Link from 'next/link';
+import styles from './page.module.css';
 
 export default function IndexPage() {
-  const [hovered, setHovered] = useState(false);
   return (
     <>
-      <style>{`
-.wwebjs-landing .wwebjs-gradient {
-  display: inline-block;
-  background: linear-gradient(
-    90deg,
-  #5b21b6 0%,
-  #7c3aed 15%,
-  #06b6d4 35%,
-  #22d3ee 50%,
-  #06b6d4 65%,
-  #7c3aed 85%,
-  #5b21b6 100%
-  );
-  background-size: 200% 100%;
-  background-position: 0% 50%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 6px 18px rgba(12, 12, 12, 0.03);
-  will-change: background-position, opacity, filter;
-  opacity: 0;
-  animation:
-    wwebjs-fade-in 600ms ease forwards,
-    wwebjs-gradient-wave 16s linear infinite,
-    wwebjs-glow 20s ease-in-out infinite alternate;
-}
-
-@keyframes wwebjs-gradient-wave {
-  0% {
-    background-position: 0% 50%;
-  }
-  100% {
-    background-position: 200% 50%;
-  }
-}
-
-@keyframes wwebjs-fade-in {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-@keyframes wwebjs-glow {
-  0% {
-    filter: brightness(1) saturate(1);
-  }
-  50% {
-    filter: brightness(1.25) saturate(1.4);
-  }
-  100% {
-    filter: brightness(1) saturate(1);
-  }
-}
-
-        /* Respect user's reduced motion preference */
-        @media (prefers-reduced-motion: reduce) {
-          .wwebjs-landing .wwebjs-gradient { animation: none !important; }
-        }
-      `}</style>
+      {/* Extracted gradient animation CSS into page.module.css */}
       <main
         style={{
           minHeight: '100vh',
@@ -78,7 +17,7 @@ export default function IndexPage() {
         }}
       >
         <div
-          className="wwebjs-landing"
+          className={styles.landing}
           style={{
             textAlign: 'center',
             maxWidth: 980,
@@ -95,7 +34,7 @@ export default function IndexPage() {
             }}
           >
             Build WhatsApp Automations <br />
-            with <span className="wwebjs-gradient">WWebJS</span>
+            with <span className={styles.gradient}>WWebJS</span>
           </h1>
 
           <p
@@ -111,45 +50,11 @@ export default function IndexPage() {
 
           <Link
             href="/discover"
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-            onFocus={() => setHovered(true)}
-            onBlur={() => setHovered(false)}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.85rem 1.6rem',
-              minWidth: '140px',
-              justifyContent: 'center',
-              borderRadius: '9999px',
-              background: 'linear-gradient(90deg,#0ea5ff,#3b82f6)',
-              color: 'white',
-              fontWeight: 600,
-              boxShadow: hovered
-                ? '0 12px 36px rgba(14,165,255,0.22)'
-                : '0 8px 24px rgba(14,165,255,0.18)',
-              textDecoration: 'none',
-              fontSize: '1.05rem',
-              transform: hovered ? 'translateY(-3px) scale(1.03)' : 'translateY(0) scale(1)',
-              transition:
-                'transform 180ms cubic-bezier(.2,.8,.2,1), box-shadow 180ms, filter 180ms',
-              filter: hovered ? 'brightness(1.03)' : 'none',
-            }}
+            className={styles.ctaButton}
             aria-label="Discover WWebJS"
           >
             <span style={{ letterSpacing: '-0.01em' }}>Discover</span>
-            <span
-              style={{
-                fontSize: '1.2rem',
-                lineHeight: 1,
-                display: 'inline-block',
-                transform: hovered ? 'translateX(4px)' : 'translateX(0)',
-                transition: 'transform 180ms cubic-bezier(.2,.8,.2,1)',
-              }}
-            >
-              →
-            </span>
+            <span className={styles.ctaArrow}>→</span>
           </Link>
         </div>
       </main>
