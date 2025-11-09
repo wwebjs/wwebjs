@@ -48,7 +48,11 @@ const footer = (
   </Footer>
 );
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   let pageMap = {} as Awaited<ReturnType<typeof getPageMap>>;
   try {
     pageMap = await getPageMap();
@@ -56,25 +60,27 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     pageMap = {} as typeof pageMap;
   }
 
-  if (process.env.NODE_ENV !== 'production') {
-  }
-
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta property="og:title" content="wwebjs" />
-        <meta property="og:description" content="WhatsApp Web client for Node.js" />
+        <meta
+          property="og:description"
+          content="WhatsApp Web client for Node.js"
+        />
       </Head>
       <body>
         <Layout
           navbar={navbar}
           pageMap={pageMap}
           sidebar={{ defaultMenuCollapseLevel: 1 }}
-          banner={<Banner storageKey="wwebjs">wwebjs</Banner>}
-          editLink="Edit this page on GitHub"
           docsRepositoryBase="https://github.com/wwebjs/wwebjs/tree/main/apps/website"
           footer={footer}
+          editLink={null}
+          feedback={{
+            link: 'https://github.com/wwebjs/wwebjs/issues/new/choose',
+          }}
         >
           {children}
         </Layout>
