@@ -14,7 +14,6 @@ type PageProps = Readonly<{
 
 function resolveMdxPathArr(mdxPath?: string[] | undefined) {
   if (!mdxPath || !mdxPath.length) return [];
-  // Sicherheitscheck: kein '.'-Segment
   if (mdxPath.some((s) => s.startsWith('.'))) return null;
   return mdxPath;
 }

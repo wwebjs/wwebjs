@@ -53,19 +53,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   try {
     pageMap = await getPageMap();
   } catch (err) {
-    // Don't crash the app if pageMap fails to build during dev.
-    // Keep a fallback empty object so Layout renders without a sidebar.
-    if (process.env.NODE_ENV !== 'production') {
-      // eslint-disable-next-line no-console
-      console.warn('getPageMap() failed:', err);
-    }
     pageMap = {} as typeof pageMap;
   }
 
-  // Debug only in non-production to avoid noisy logs in CI/Production
   if (process.env.NODE_ENV !== 'production') {
-    // eslint-disable-next-line no-console
-    //console.log('root pageMap', JSON.stringify(pageMap, null, 2));
   }
 
   return (
@@ -79,9 +70,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Layout
           navbar={navbar}
           pageMap={pageMap}
-          // Show sidebar with a sensible default collapse level
           sidebar={{ defaultMenuCollapseLevel: 1 }}
-          // Helpful UI bits
           banner={<Banner storageKey="wwebjs">wwebjs</Banner>}
           editLink="Edit this page on GitHub"
           docsRepositoryBase="https://github.com/wwebjs/wwebjs/tree/main/apps/website"
