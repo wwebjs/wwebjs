@@ -1,4 +1,5 @@
 import { generateStaticParamsFor, importPage } from 'nextra/pages';
+import React from 'react';
 import type { FC } from 'react';
 import type { Metadata } from 'next';
 import { useMDXComponents as getMDXComponents } from '../../../../mdx-components.js';

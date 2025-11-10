@@ -23,7 +23,9 @@ export const OverviewPage: FC<{
           const icon = item.frontMatter?.icon;
           const Icon = icons?.[icon];
           if (icon && !Icon) {
-            throw new Error(`Icon "${icon}" is defined in front matter but isn't provided`);
+            throw new Error(
+              `Icon "${icon}" is defined in front matter but isn't provided`,
+            );
           }
           return (
             // @ts-expect-error -- fixme

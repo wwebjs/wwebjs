@@ -3,7 +3,9 @@
 import { Navbar as NextraNavbar } from 'nextra-theme-docs';
 import type { ComponentProps, ReactElement } from 'react';
 
-export function Navbar(props: ComponentProps<typeof NextraNavbar>): ReactElement {
+export function Navbar(
+  props: ComponentProps<typeof NextraNavbar>,
+): ReactElement {
   return (
     <>
       <style jsx global>{`
@@ -37,11 +39,17 @@ export function Navbar(props: ComponentProps<typeof NextraNavbar>): ReactElement
           background-color: rgb(229, 231, 235);
         }
 
-        :is(html[class~='dark']) .wwebjs-navbar div.nextra-scrollbar a[href^='http'] {
+        :is(html[class~='dark'])
+          .wwebjs-navbar
+          div.nextra-scrollbar
+          a[href^='http'] {
           background-color: rgb(31, 41, 55);
         }
 
-        :is(html[class~='dark']) .wwebjs-navbar div.nextra-scrollbar a[href^='http']:hover {
+        :is(html[class~='dark'])
+          .wwebjs-navbar
+          div.nextra-scrollbar
+          a[href^='http']:hover {
           background-color: rgb(55, 65, 81);
         }
 

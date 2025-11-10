@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import { Footer, Layout } from 'nextra-theme-docs';
-import { Head, Banner } from 'nextra/components';
+import { Head } from 'nextra/components';
 import { getPageMap } from 'nextra/page-map';
 import { Navbar } from '../components/Navbar';
+import React from 'react';
 import Image from 'next/image';
 import 'nextra-theme-docs/style.css';
 
