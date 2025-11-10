@@ -9,7 +9,7 @@ export default function IndexPage() {
       {/* Extracted gradient animation CSS into page.module.css */}
       <main
         style={{
-          minHeight: '100vh',
+          minBlockSize: '100vh',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -20,7 +20,7 @@ export default function IndexPage() {
           className={styles.landing}
           style={{
             textAlign: 'center',
-            maxWidth: 980,
+            maxInlineSize: '980px',
             margin: '0 auto',
             transform: 'translateY(-6vh)',
           }}
@@ -29,7 +29,7 @@ export default function IndexPage() {
             style={{
               margin: 0,
               fontWeight: 800,
-              lineHeight: 1.02,
+              lineHeight: '1.02',
               fontSize: 'clamp(2.5rem, 6vw, 4.25rem)',
             }}
           >

@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { Footer, Layout } from 'nextra-theme-docs';
-import { Head } from 'nextra/components';
 import { getPageMap } from 'nextra/page-map';
 import { Navbar } from '../components/Navbar';
 import React from 'react';
@@ -57,20 +56,21 @@ export default async function RootLayout({
   let pageMap = {} as Awaited<ReturnType<typeof getPageMap>>;
   try {
     pageMap = await getPageMap();
-  } catch (err) {
+  } catch (_err) {
+    void _err;
     pageMap = {} as typeof pageMap;
   }
 
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
-      <Head>
+      <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta property="og:title" content="wwebjs" />
         <meta
           property="og:description"
           content="WhatsApp Web client for Node.js"
         />
-      </Head>
+      </head>
       <body>
         <Layout
           navbar={navbar}
