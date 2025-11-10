@@ -1,8 +1,0 @@
-node_modules
-.next
-.turbo
-dist
-coverage
-public/_pagefind
-*.log
-.vscode
