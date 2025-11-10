@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json.schemastore.org/package.json",
+  "$schema": "https://www.schemastore.org/package.json",
   "name": "@wwebjs/website",
   "version": "0.0.0",
   "private": true,
@@ -9,8 +9,8 @@
     "build": "next build",
     "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind",
     "dev": "next dev",
-    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "format": "prettier --write '**/*.{ts,tsx,js,jsx,md,mdx,json,css}'",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "start": "next start",
     "type-check": "tsc -p tsconfig.json --noEmit"
   },
