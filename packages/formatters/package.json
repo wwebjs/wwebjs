@@ -1,0 +1,58 @@
+{
+  "$schema": "https://www.schemastore.org/package.json",
+  "name": "@wwebjs/formatters",
+  "version": "0.0.0",
+  "description": "A collection of utility functions for formatting WhatsApp messages.",
+  "keywords": [
+    "whatsapp",
+    "whatsapp-web",
+    "formatters",
+    "markdown"
+  ],
+  "homepage": "https://wwebjs.dev",
+  "bugs": {
+    "url": "https://github.com/wwebjs/wwebjs/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wwebjs/wwebjs.git",
+    "directory": "packages/formatters"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc --noEmit && tsup",
+    "lint": "eslint src",
+    "test": "echo \"No tests yet\"",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=22.12.0",
+    "pnpm": ">=10.20.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

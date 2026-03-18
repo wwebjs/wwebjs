@@ -1,0 +1,5 @@
+{
+  "$schema": "https://www.schemastore.org/tsconfig.json",
+  "extends": "./tsconfig.json",
+  "include": ["src", "eslint.config.js", "tsup.config.ts"]
+}
