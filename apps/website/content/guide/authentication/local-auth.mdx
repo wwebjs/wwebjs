@@ -10,21 +10,21 @@ description: Persist your WhatsApp session to disk so your app survives restarts
 `LocalAuth` is built into whatsapp-web.js. No extra packages required.
 
 ```javascript
-const { Client, LocalAuth } = require('whatsapp-web.js');
+const { Client, LocalAuth } = require('whatsapp-web.js')
 
 const client = new Client({
-    authStrategy: new LocalAuth()
-});
+  authStrategy: new LocalAuth(),
+})
 
 client.on('qr', qr => {
-    console.log('First run, scan this QR code');
-});
+  console.log('First run, scan this QR code')
+})
 
 client.on('ready', () => {
-    console.log('Ready!');
-});
+  console.log('Ready!')
+})
 
-client.initialize();
+client.initialize()
 ```
 
 ## What Gets Created
@@ -47,11 +47,11 @@ Add `.wwebjs_auth` to your `.gitignore` to avoid accidentally committing session
 
 ```javascript
 const client = new Client({
-    authStrategy: new LocalAuth({
-        clientId: 'my-app',       // Unique name — lets multiple apps share one machine
-        dataPath: './sessions'     // Where to store session files (default: ./.wwebjs_auth)
-    })
-});
+  authStrategy: new LocalAuth({
+    clientId: 'my-app', // Unique name — lets multiple apps share one machine
+    dataPath: './sessions', // Where to store session files (default: ./.wwebjs_auth)
+  }),
+})
 ```
 
 ### `clientId`
@@ -61,13 +61,13 @@ When you run more than one app on the same machine, give each a different `clien
 ```javascript
 // app 1
 const client1 = new Client({
-    authStrategy: new LocalAuth({ clientId: 'support-app' })
-});
+  authStrategy: new LocalAuth({ clientId: 'support-app' }),
+})
 
 // app 2
 const client2 = new Client({
-    authStrategy: new LocalAuth({ clientId: 'sales-app' })
-});
+  authStrategy: new LocalAuth({ clientId: 'sales-app' }),
+})
 ```
 
 This creates separate folders: `.wwebjs_auth/support-app/` and `.wwebjs_auth/sales-app/`.
@@ -75,23 +75,25 @@ This creates separate folders: `.wwebjs_auth/support-app/` and `.wwebjs_auth/sal
 ## First Run vs Subsequent Runs
 
 **First run:**
+
 1. `qr` event fires — scan with your phone
 2. Session is saved to disk
 3. `authenticated` then `ready` fires
 
 **Subsequent runs:**
+
 1. Session is restored from disk
 2. `authenticated` then `ready` fires — no QR code
 
 ```javascript
 client.on('qr', qr => {
-    // This only fires on first run (or if session expires)
-    console.log('Scan QR code');
-});
+  // This only fires on first run (or if session expires)
+  console.log('Scan QR code')
+})
 
 client.on('ready', () => {
-    console.log('Ready!');
-});
+  console.log('Ready!')
+})
 ```
 
 ## Limitations
@@ -99,4 +101,3 @@ client.on('ready', () => {
 - **One instance per `clientId`**: Two processes with the same `clientId` will conflict.
 - **Tied to the filesystem**: Moving the app to a different server means copying the session folder.
 - **Not suitable for containers**: If the container is recreated, the session is lost. Use [RemoteAuth](./remote-auth) instead.
-

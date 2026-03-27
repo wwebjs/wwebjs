@@ -6,14 +6,14 @@ description: Update a group's name, description, announcement mode, and profile 
 ## Change the Group Name
 
 ```javascript
-const group = await client.getChatById('120363021234567890@g.us');
-await group.setSubject('New Group Name');
+const group = await client.getChatById('120363021234567890@g.us')
+await group.setSubject('New Group Name')
 ```
 
 ## Change the Description
 
 ```javascript
-await group.setDescription('Welcome to the official support group.');
+await group.setDescription('Welcome to the official support group.')
 ```
 
 ## Announcement Mode
@@ -22,10 +22,10 @@ In announcement mode only admins can send messages. Toggle it on and off:
 
 ```javascript
 // Only admins can send messages
-await group.setAnnouncement(true);
+await group.setAnnouncement(true)
 
 // Everyone can send messages
-await group.setAnnouncement(false);
+await group.setAnnouncement(false)
 ```
 
 ## Restrict Settings Editing
@@ -34,10 +34,10 @@ Limit who can change the group's name, icon, and description to admins only:
 
 ```javascript
 // Only admins can edit group info
-await group.setInfoAdminsOnly(true);
+await group.setInfoAdminsOnly(true)
 
 // All participants can edit group info
-await group.setInfoAdminsOnly(false);
+await group.setInfoAdminsOnly(false)
 ```
 
 ## Set Group Picture
@@ -45,15 +45,15 @@ await group.setInfoAdminsOnly(false);
 Send a `MessageMedia` object as the group icon:
 
 ```javascript
-const { MessageMedia } = require('whatsapp-web.js');
-const media = MessageMedia.fromFilePath('./group-icon.jpg');
-await group.setPicture(media);
+const { MessageMedia } = require('whatsapp-web.js')
+const media = MessageMedia.fromFilePath('./group-icon.jpg')
+await group.setPicture(media)
 ```
 
 ## Delete Group Picture
 
 ```javascript
-await group.deletePicture();
+await group.deletePicture()
 ```
 
 ## Listen for Setting Changes
@@ -62,8 +62,7 @@ await group.deletePicture();
 
 ```javascript
 client.on('group_update', async notification => {
-    const chat = await notification.getChat();
-    console.log(`Group "${chat.name}" was updated:`, notification.type);
-});
+  const chat = await notification.getChat()
+  console.log(`Group "${chat.name}" was updated:`, notification.type)
+})
 ```
-

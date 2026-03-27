@@ -1,6 +1,6 @@
 'use client'
 
-import { MacWindow } from '@/components/ui/mac-window'
+import { MacWindow } from '@/components/custom/mac-window'
 import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock'
 
 const botCode = `const { Client } = require('whatsapp-web.js');

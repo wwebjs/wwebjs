@@ -101,11 +101,11 @@ export function NpmDownloadsChart() {
   }, [])
 
   return (
-    <Card className="bg-card border-border" ref={ref}>
+    <Card className="bg-card border-none shadow-none" ref={ref}>
       <CardHeader className="flex flex-row items-start justify-between gap-4 space-y-0 pb-4">
         <div className="grid gap-1">
-          <CardTitle className="text-card-foreground">NPM Package • whatsapp-web.js</CardTitle>
-          <CardDescription className="text-muted-foreground">monthly downloads</CardDescription>
+          <CardTitle className="text-card-foreground">whatsapp-web.js</CardTitle>
+          <CardDescription className="text-muted-foreground">monthly npm downloads</CardDescription>
         </div>
         <div className="flex gap-1 rounded-lg bg-muted p-1">
           {TIME_RANGES.map(({ label, value }) => (

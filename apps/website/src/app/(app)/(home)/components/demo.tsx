@@ -1,4 +1,4 @@
-import { MacWindowGroup } from '@/components/ui/mac-window'
+import { MacWindowGroup } from '@/components/custom/mac-window'
 import { ChatWindow } from './chat-window'
 import { CodeWindow } from './code-window'
 import { TerminalWindow } from './terminal-window'

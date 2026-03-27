@@ -1,6 +1,6 @@
 'use client'
 
-import { MacWindow } from '@/components/ui/mac-window'
+import { MacWindow } from '@/components/custom/mac-window'
 import {
   AnimatedSpan,
   Terminal,

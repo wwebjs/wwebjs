@@ -101,10 +101,10 @@ Archive, pin, mute, mark as unread, and delete chats programmatically.
 Move a chat to the archive or restore it:
 
 ```javascript
-const chat = await client.getChatById('15551234567@c.us');
+const chat = await client.getChatById('15551234567@c.us')
 
-await chat.archive();
-await chat.unarchive();
+await chat.archive()
+await chat.unarchive()
 ```
 
 ### Pin and Unpin
@@ -112,8 +112,8 @@ await chat.unarchive();
 Keep important chats at the top of the list:
 
 ```javascript
-await chat.pin();
-await chat.unpin();
+await chat.pin()
+await chat.unpin()
 ```
 
 ### Mute Notifications
@@ -122,13 +122,13 @@ Mute a chat for a duration in milliseconds, or indefinitely by passing `null`:
 
 ```javascript
 // Mute for 8 hours
-await chat.mute(8 * 60 * 60 * 1000);
+await chat.mute(8 * 60 * 60 * 1000)
 
 // Mute indefinitely
-await chat.mute(null);
+await chat.mute(null)
 
 // Unmute
-await chat.unmute();
+await chat.unmute()
 ```
 
 ## Mark as Unread
@@ -136,7 +136,7 @@ await chat.unmute();
 Flag a chat so it appears as having unread messages:
 
 ```javascript
-await chat.markUnread();
+await chat.markUnread()
 ```
 
 ### Delete a Chat
@@ -144,7 +144,7 @@ await chat.markUnread();
 Remove the chat from the list. This only removes it from the app's view, not from the other participant's side:
 
 ```javascript
-await chat.delete();
+await chat.delete()
 ```
 
 ### Typing and Recording Indicators
@@ -153,25 +153,25 @@ Show the "typing..." or "recording audio..." state while the app is working:
 
 ```javascript
 client.on('message', async msg => {
-    const chat = await msg.getChat();
+  const chat = await msg.getChat()
 
-    // Show typing indicator
-    await chat.sendStateTyping();
+  // Show typing indicator
+  await chat.sendStateTyping()
 
-    await new Promise(r => setTimeout(r, 2000));
+  await new Promise(r => setTimeout(r, 2000))
 
-    // Clear the indicator before sending
-    await chat.clearState();
-    await msg.reply('Done!');
-});
+  // Clear the indicator before sending
+  await chat.clearState()
+  await msg.reply('Done!')
+})
 ```
 
 For voice-message style apps, use the recording indicator:
 
 ```javascript
-await chat.sendStateRecording();
-await new Promise(r => setTimeout(r, 3000));
-await chat.clearState();
+await chat.sendStateRecording()
+await new Promise(r => setTimeout(r, 3000))
+await chat.clearState()
 ```
 
 ### Listen for Chat Updates
@@ -180,7 +180,6 @@ The `chat_removed` event fires when the app leaves or deletes a conversation:
 
 ```javascript
 client.on('chat_removed', chat => {
-    console.log('Chat removed:', chat.name);
-});
+  console.log('Chat removed:', chat.name)
+})
 ```
-

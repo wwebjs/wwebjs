@@ -5,7 +5,7 @@ import { useTheme } from 'next-themes'
 import dynamic from 'next/dynamic'
 import { useEffect, useRef, useState } from 'react'
 
-function DitheringCardInner() {
+function DitheringBackgroundInner() {
   const { resolvedTheme } = useTheme()
   const [isVisible, setIsVisible] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -27,7 +27,7 @@ function DitheringCardInner() {
   }, [])
 
   return (
-    <div ref={ref} className="rounded-2xl border border-border overflow-hidden h-48">
+    <div ref={ref} className="size-full overflow-hidden">
       {isVisible && (
         <Dithering
           colorBack={resolvedTheme === 'dark' ? '#0a0a0a' : '#fafafa'}
@@ -43,9 +43,7 @@ function DitheringCardInner() {
   )
 }
 
-export const DitheringCard = dynamic(() => Promise.resolve(DitheringCardInner), {
+export const DitheringBackground = dynamic(() => Promise.resolve(DitheringBackgroundInner), {
   ssr: false,
-  loading: () => (
-    <div className="rounded-2xl border border-border h-48 bg-muted/20 animate-pulse" />
-  ),
+  loading: () => <div className="size-full bg-muted/20 animate-pulse" />,
 })

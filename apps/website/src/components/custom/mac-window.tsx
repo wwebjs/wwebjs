@@ -9,7 +9,6 @@ import React, { createContext, useContext, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import Draggable from 'react-draggable'
 
-// ── Popout group - only one window may be popped at a time ───────────────────
 interface MacWindowGroupState {
   activeKey: string | null
   claim: (key: string) => boolean
@@ -20,27 +19,54 @@ const MacWindowGroupContext = createContext<MacWindowGroupState | null>(null)
 
 export function MacWindowGroup({ children }: { children: ReactNode }) {
   const [activeKey, setActiveKey] = useState<string | null>(null)
+
   const claim = (key: string) => {
     if (activeKey !== null) return false
     setActiveKey(key)
     return true
   }
+
   const release = (key: string) => {
     if (activeKey === key) setActiveKey(null)
   }
+
   return (
     <MacWindowGroupContext.Provider value={{ activeKey, claim, release }}>
       {children}
     </MacWindowGroupContext.Provider>
   )
 }
-// ────────────────────────────────────────────────────────────────────────────
+
+interface TitleBarProps {
+  title?: string
+  dragHandle?: boolean
+  action: ReactNode
+}
+
+function TitleBar({ title, dragHandle, action }: TitleBarProps) {
+  return (
+    <div
+      data-drag-handle={dragHandle || undefined}
+      className={cn(
+        'flex items-center gap-2 px-4 py-3 bg-muted/50',
+        dragHandle && 'cursor-grab active:cursor-grabbing'
+      )}
+    >
+      <span className="h-3 w-3 rounded-full bg-[#FF5F57]" />
+      <span className="h-3 w-3 rounded-full bg-[#FEBC2E]" />
+      <span className="h-3 w-3 rounded-full bg-[#28C840]" />
+      {title && (
+        <span className="ml-3 text-xs text-muted-foreground font-mono truncate">{title}</span>
+      )}
+      <div className="ml-auto">{action}</div>
+    </div>
+  )
+}
 
 interface MacWindowProps {
   className?: string
   children?: ReactNode
   title?: string
-  /** Unique key within a <MacWindowGroup> - enforces only one popout at a time. */
   groupKey?: string
 }
 
@@ -50,9 +76,7 @@ export function MacWindow({ className, children, title, groupKey }: MacWindowPro
   const group = useContext(MacWindowGroupContext)
 
   const handlePopOut = () => {
-    if (group && groupKey) {
-      if (!group.claim(groupKey)) return // another window is already popped
-    }
+    if (group && groupKey && !group.claim(groupKey)) return
     popOut()
   }
 
@@ -63,23 +87,17 @@ export function MacWindow({ className, children, title, groupKey }: MacWindowPro
 
   return (
     <>
-      {/* Original - blurred when popped out */}
       <div
         ref={containerRef}
         className={cn(
-          'rounded-xl border border-border bg-card overflow-hidden transition-[filter] duration-200',
+          'rounded-xl bg-card overflow-hidden transition-[filter] duration-200',
           isPopped && 'blur-sm pointer-events-none select-none',
           className
         )}
       >
-        <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-muted/50">
-          <span className="h-3 w-3 rounded-full bg-[#FF5F57]" />
-          <span className="h-3 w-3 rounded-full bg-[#FEBC2E]" />
-          <span className="h-3 w-3 rounded-full bg-[#28C840]" />
-          {title && (
-            <span className="ml-3 text-xs text-muted-foreground font-mono truncate">{title}</span>
-          )}
-          <div className="ml-auto">
+        <TitleBar
+          title={title}
+          action={
             <Button
               variant="ghost"
               size="icon-sm"
@@ -88,12 +106,11 @@ export function MacWindow({ className, children, title, groupKey }: MacWindowPro
             >
               <Maximize2 className="h-3 w-3" />
             </Button>
-          </div>
-        </div>
+          }
+        />
         {children}
       </div>
 
-      {/* Draggable popout rendered at document.body */}
       {isPopped &&
         typeof document !== 'undefined' &&
         createPortal(
@@ -105,34 +122,22 @@ export function MacWindow({ className, children, title, groupKey }: MacWindowPro
             <div
               ref={draggableRef}
               style={{ position: 'fixed', top: 0, left: 0, width: origin.width, zIndex: 9999 }}
-              className={cn(
-                'rounded-xl border border-border overflow-hidden shadow-2xl bg-popover',
-                className
-              )}
+              className={cn('rounded-xl overflow-hidden shadow-2xl bg-popover', className)}
             >
-              <div
-                data-drag-handle
-                className="flex items-center gap-2 px-4 py-3 border-b border-border bg-muted/50 cursor-grab active:cursor-grabbing"
-              >
-                <span className="h-3 w-3 rounded-full bg-[#FF5F57]" />
-                <span className="h-3 w-3 rounded-full bg-[#FEBC2E]" />
-                <span className="h-3 w-3 rounded-full bg-[#28C840]" />
-                {title && (
-                  <span className="ml-3 text-xs text-muted-foreground font-mono truncate">
-                    {title}
-                  </span>
-                )}
-                <div className="ml-auto">
+              <TitleBar
+                title={title}
+                dragHandle
+                action={
                   <Button
                     variant="ghost"
                     size="icon-sm"
                     onClick={handlePopIn}
-                    className="hover:cursor-pointer"
+                    className="cursor-pointer"
                   >
                     <Minimize2 className="h-3 w-3" />
                   </Button>
-                </div>
-              </div>
+                }
+              />
               {children}
             </div>
           </Draggable>,
