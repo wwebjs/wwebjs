@@ -1,0 +1,21 @@
+{
+  "name": "my-wwebjs-app",
+  "version": "1.0.0",
+  "description": "A whatsapp-web.js bot",
+  "scripts": {
+    "start": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "qrcode-terminal": "^0.12.0",
+    "whatsapp-web.js": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/qrcode-terminal": "^0.12.2",
+    "tsx": "^4.19.4",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

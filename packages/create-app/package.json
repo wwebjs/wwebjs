@@ -1,0 +1,52 @@
+{
+  "$schema": "https://www.schemastore.org/package.json",
+  "name": "create-wwebjs-app",
+  "version": "1.0.0",
+  "description": "Create a new whatsapp-web.js project from a template.",
+  "keywords": [
+    "whatsapp",
+    "whatsapp-web",
+    "create-app",
+    "cli"
+  ],
+  "homepage": "https://wwebjs.dev",
+  "bugs": {
+    "url": "https://github.com/wwebjs/wwebjs/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wwebjs/wwebjs.git",
+    "directory": "packages/create-app"
+  },
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "create-wwebjs-app": "./dist/bin.js"
+  },
+  "files": [
+    "dist",
+    "template"
+  ],
+  "scripts": {
+    "build": "tsc --noEmit && tsup",
+    "lint": "eslint src",
+    "test": "echo \"No tests yet\"",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.9.1",
+    "commander": "^13.1.0",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=22.12.0",
+    "pnpm": ">=10.20.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
