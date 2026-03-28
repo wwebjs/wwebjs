@@ -9,8 +9,8 @@ import { siteConfig } from '@/lib/config'
 import { cn } from '@/lib/utils'
 import { SearchBar } from './search'
 import { MobileNav } from './mobile-nav'
-import { DiscordLink } from './components/discord-link'
-import { GitHubLink } from './components/github-link'
+import { GitHub } from './components/github'
+import { Discord } from './components/discord'
 import { ModeSwitcher } from './components/mode-switcher'
 
 function MainNav({
@@ -68,9 +68,9 @@ export function SiteHeader() {
         <div className="ml-auto flex items-center gap-1">
           <SearchBar />
           <div aria-hidden="true" className="mx-1 h-4 w-px bg-border" />
-          <GitHubLink />
+          <GitHub />
           <div aria-hidden="true" className="mx-1 h-4 w-px bg-border" />
-          <DiscordLink />
+          <Discord />
           <div aria-hidden="true" className="mx-1 h-4 w-px bg-border" />
           <ModeSwitcher />
         </div>

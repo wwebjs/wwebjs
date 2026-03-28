@@ -17,7 +17,7 @@ function DiscordIcon({ className }: { className?: string }) {
   )
 }
 
-export function DiscordLink() {
+export function Discord() {
   return (
     <Button
       variant="ghost"

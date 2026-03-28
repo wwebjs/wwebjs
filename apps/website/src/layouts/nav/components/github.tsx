@@ -1,5 +1,7 @@
-import Link from 'next/link'
+'use client'
+
 import * as React from 'react'
+import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -16,7 +18,19 @@ function GitHubIcon(props: React.SVGProps<SVGSVGElement>) {
   )
 }
 
-export function GitHubLink() {
+export function GitHub() {
+  const [stars, setStars] = React.useState<string | null>(null)
+
+  React.useEffect(() => {
+    fetch('https://api.github.com/repos/wwebjs/whatsapp-web.js')
+      .then(r => r.json())
+      .then((json: { stargazers_count: number }) => {
+        const count = json.stargazers_count
+        setStars(count >= 1000 ? `${Math.round(count / 1000)}k` : String(count))
+      })
+      .catch(() => null)
+  }, [])
+
   return (
     <Button
       variant="ghost"
@@ -26,26 +40,13 @@ export function GitHubLink() {
       render={
         <Link href={siteConfig.links.github} target="_blank" rel="noreferrer">
           <GitHubIcon className="size-4" />
-          <React.Suspense fallback={<Skeleton className="h-3.5 w-9" />}>
-            <StarsCount />
-          </React.Suspense>
+          {stars === null ? (
+            <Skeleton className="h-3.5 w-9" />
+          ) : (
+            <span className="text-xs text-muted-foreground tabular-nums">{stars}</span>
+          )}
         </Link>
       }
     />
   )
-}
-
-async function StarsCount() {
-  let formatted: string | null = null
-  try {
-    const res = await fetch('https://api.github.com/repos/pedroslopez/whatsapp-web.js', {
-      next: { revalidate: 86400 },
-    })
-    const json = await res.json()
-    const count: number = json.stargazers_count
-    formatted = count >= 1000 ? `${Math.round(count / 1000)}k` : String(count)
-  } catch {
-    return null
-  }
-  return <span className="text-xs text-muted-foreground tabular-nums">{formatted}</span>
 }
