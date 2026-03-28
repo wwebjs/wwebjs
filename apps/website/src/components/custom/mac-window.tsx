@@ -1,41 +1,15 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { usePopout } from '@/hooks/use-popout'
-import { cn } from '@/lib/utils'
-import { Maximize2, Minimize2 } from 'lucide-react'
-import type { ReactNode } from 'react'
-import React, { createContext, useContext, useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import { createPortal } from 'react-dom'
 import Draggable from 'react-draggable'
+import { Maximize2, Minimize2 } from 'lucide-react'
+import type { ReactNode } from 'react'
 
-interface MacWindowGroupState {
-  activeKey: string | null
-  claim: (key: string) => boolean
-  release: (key: string) => void
-}
-
-const MacWindowGroupContext = createContext<MacWindowGroupState | null>(null)
-
-export function MacWindowGroup({ children }: { children: ReactNode }) {
-  const [activeKey, setActiveKey] = useState<string | null>(null)
-
-  const claim = (key: string) => {
-    if (activeKey !== null) return false
-    setActiveKey(key)
-    return true
-  }
-
-  const release = (key: string) => {
-    if (activeKey === key) setActiveKey(null)
-  }
-
-  return (
-    <MacWindowGroupContext.Provider value={{ activeKey, claim, release }}>
-      {children}
-    </MacWindowGroupContext.Provider>
-  )
-}
+import { Button } from '@/components/ui/button'
+import { usePopout } from '@/hooks/use-popout'
+import { useMacWindowGroup } from '@/components/custom/mac-window-group'
+import { cn } from '@/lib/utils'
 
 interface TitleBarProps {
   title?: string
@@ -73,7 +47,7 @@ interface MacWindowProps {
 export function MacWindow({ className, children, title, groupKey }: MacWindowProps) {
   const { isPopped, origin, containerRef, popOut, popIn } = usePopout()
   const draggableRef = useRef<HTMLDivElement>(null)
-  const group = useContext(MacWindowGroupContext)
+  const group = useMacWindowGroup()
 
   const handlePopOut = () => {
     if (group && groupKey && !group.claim(groupKey)) return

@@ -7,7 +7,7 @@ export default function HomePage() {
   return (
     <div className="flex flex-col items-center w-full">
       {/* Header */}
-      <section className="w-full max-w-3xl mx-auto px-4 pt-16 pb-8 text-center space-y-4">
+      <section className="w-full max-w-3xl mx-auto px-4 pt-16 pb-16 text-center space-y-4">
         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground leading-tight">
           Build WhatsApp Automation, with whatsapp-web.js
         </h1>
@@ -32,7 +32,7 @@ export default function HomePage() {
       </section>
 
       {/* Main */}
-      <main className="w-full max-w-7xl mx-auto px-4">
+      <main className="w-full max-w-[90rem] mx-auto px-4">
         <HomeTabs />
       </main>
 

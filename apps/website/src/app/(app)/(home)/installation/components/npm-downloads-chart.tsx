@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -79,29 +79,10 @@ function filterData(range: TimeRange) {
 
 export function NpmDownloadsChart() {
   const [timeRange, setTimeRange] = useState<TimeRange>('3Y')
-  const [isVisible, setIsVisible] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
   const filtered = useMemo(() => filterData(timeRange), [timeRange])
 
-  // Only render the chart once it has scrolled into view - never unload it again
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-          observer.disconnect()
-        }
-      },
-      { threshold: 0.1 }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [])
-
   return (
-    <Card className="bg-card border-none shadow-none" ref={ref}>
+    <Card className="bg-card border-none shadow-none">
       <CardHeader className="flex flex-row items-start justify-between gap-4 space-y-0 pb-4">
         <div className="grid gap-1">
           <CardTitle className="text-card-foreground">whatsapp-web.js</CardTitle>
@@ -126,61 +107,57 @@ export function NpmDownloadsChart() {
       </CardHeader>
       <CardContent className="px-2 pt-0 sm:px-4">
         <ChartContainer config={chartConfig} className="aspect-auto h-55 w-full">
-          {isVisible ? (
-            <AreaChart data={filtered} margin={{ top: 8, left: 0, right: 8, bottom: 0 }}>
-              <defs>
-                <linearGradient id="fillDownloads" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={CHART_COLOR} stopOpacity={0.15} />
-                  <stop offset="95%" stopColor={CHART_COLOR} stopOpacity={0.01} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid vertical={false} stroke="var(--border)" />
-              <XAxis
-                dataKey="date"
-                tickLine={false}
-                axisLine={false}
-                tickMargin={8}
-                minTickGap={32}
-                tick={{ fill: 'var(--muted-foreground)', fontSize: 11 }}
-                tickFormatter={(value: string) => {
-                  const date = new Date(value)
-                  return date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' })
-                }}
-              />
-              <YAxis
-                tickLine={false}
-                axisLine={false}
-                tickMargin={8}
-                width={48}
-                tick={{ fill: 'var(--muted-foreground)', fontSize: 11 }}
-                tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}
-              />
-              <ChartTooltip
-                cursor={false}
-                content={
-                  <ChartTooltipContent
-                    labelFormatter={(value: unknown) =>
-                      new Date(value as string).toLocaleDateString('en-US', {
-                        month: 'long',
-                        year: 'numeric',
-                      })
-                    }
-                    formatter={(value: unknown) => (value as number).toLocaleString()}
-                    indicator="dot"
-                  />
-                }
-              />
-              <Area
-                dataKey="downloads"
-                type="natural"
-                fill="url(#fillDownloads)"
-                stroke={CHART_COLOR}
-                strokeWidth={2}
-              />
-            </AreaChart>
-          ) : (
-            <div className="h-full w-full" />
-          )}
+          <AreaChart data={filtered} margin={{ top: 8, left: 0, right: 8, bottom: 0 }}>
+            <defs>
+              <linearGradient id="fillDownloads" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={CHART_COLOR} stopOpacity={0.15} />
+                <stop offset="95%" stopColor={CHART_COLOR} stopOpacity={0.01} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid vertical={false} stroke="var(--border)" />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              minTickGap={32}
+              tick={{ fill: 'var(--muted-foreground)', fontSize: 11 }}
+              tickFormatter={(value: string) => {
+                const date = new Date(value)
+                return date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' })
+              }}
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              width={48}
+              tick={{ fill: 'var(--muted-foreground)', fontSize: 11 }}
+              tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}
+            />
+            <ChartTooltip
+              cursor={false}
+              content={
+                <ChartTooltipContent
+                  labelFormatter={(value: unknown) =>
+                    new Date(value as string).toLocaleDateString('en-US', {
+                      month: 'long',
+                      year: 'numeric',
+                    })
+                  }
+                  formatter={(value: unknown) => (value as number).toLocaleString()}
+                  indicator="dot"
+                />
+              }
+            />
+            <Area
+              dataKey="downloads"
+              type="natural"
+              fill="url(#fillDownloads)"
+              stroke={CHART_COLOR}
+              strokeWidth={2}
+            />
+          </AreaChart>
         </ChartContainer>
       </CardContent>
     </Card>

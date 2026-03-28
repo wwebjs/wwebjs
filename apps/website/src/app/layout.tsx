@@ -19,7 +19,7 @@ export default function Layout({ children }: LayoutProps<'/'>) {
         <Banner id="banner-experimental-preview" className="text-red/90">
           This is a experimental preview!
         </Banner>
-        <RootProvider>{children}</RootProvider>
+        <RootProvider search={{ enabled: false }}>{children}</RootProvider>
       </body>
     </html>
   )
