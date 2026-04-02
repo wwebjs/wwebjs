@@ -12,9 +12,10 @@ Developers often compare three unofficial stacks:
 | Feature                      | whatsapp-web.js                  | Baileys (WhiskeySockets)  | WhatsMeow                 |
 | ---------------------------- | -------------------------------- | ------------------------- | ------------------------- |
 | Runtime model                | Browser (Puppeteer)              | Protocol (WebSocket)      | Protocol (WebSocket)      |
-| Primary ecosystem            | Node.js                          | Node.js                   | Go                        |
-| API abstraction              | High level                       | Medium level              | Medium level              |
-| Onboarding speed             | Fast                             | Medium                    | Medium                    |
-| Runtime overhead             | Higher                           | Lower                     | Lower                     |
+| Primary ecosystem            | Node.js (JS)                     | Node.js (TS)              | Go                        |
+| API abstraction              | Medium level                     | Highest level             | High level                |
+| Onboarding speed             | Fast (very simple)               | Challenging               | Medium                    |
+| Runtime overhead             | Higher (IPC calls + Chrome)      | Lower                     | Lower                     |
 | Resource usage (CPU and RAM) | Higher, browser process included | Lower, no browser process | Lower, no browser process |
 | Browser dependency           | Yes                              | No                        | No                        |
+| Account safety               | As good as official WA Web       | Lower (direct exposure)   | Lower (direct exposure)   |
