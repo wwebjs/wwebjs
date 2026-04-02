@@ -77,11 +77,9 @@ export function GuidePageContent({
       </div>
 
       {/* TOC */}
-      {toc?.length ? (
-        <div className="sticky top-[var(--header-height)] z-30 ml-auto hidden h-[calc(var(--content-height)-110px)] w-(--sidebar-width) flex-col overflow-hidden overscroll-none xl:flex">
-          <GuideTableOfContents toc={toc} className="pt-10 pl-[22px] pr-8" />
-        </div>
-      ) : null}
+      <div className="sticky top-[var(--header-height)] z-30 ml-auto hidden h-[calc(var(--content-height)-110px)] w-(--sidebar-width) flex-col overflow-hidden overscroll-none xl:flex">
+        <GuideTableOfContents toc={toc ?? []} className="pt-10 pl-[22px] pr-8" />
+      </div>
     </div>
   )
 }

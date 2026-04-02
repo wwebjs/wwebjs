@@ -28,7 +28,9 @@ function FolderCollapsible({
   depth: number
 }) {
   const children = folder.children as PageTreeNode[]
-  const [open, setOpen] = React.useState(() => hasActivePage(children, activePath))
+  const [open, setOpen] = React.useState(
+    () => (folder.defaultOpen ?? false) || hasActivePage(children, activePath)
+  )
 
   return (
     <SidebarMenuItem>
@@ -64,11 +66,13 @@ export function SidebarNodes({
   activePath,
   onNavigate,
   depth = 0,
+  section = false,
 }: {
   nodes: PageTreeNode[]
   activePath: string
   onNavigate: (url: string) => void
   depth?: number
+  section?: boolean
 }) {
   return (
     <>
@@ -126,6 +130,21 @@ export function SidebarNodes({
 
         if (node.type === 'folder') {
           const folder = node as PageTreeFolder
+          if (section) {
+            return (
+              <React.Fragment key={folder.$id ?? i}>
+                <SidebarGroupLabel className="mt-4 text-xs font-medium text-muted-foreground">
+                  {folder.name as string}
+                </SidebarGroupLabel>
+                <SidebarNodes
+                  nodes={folder.children as PageTreeNode[]}
+                  activePath={activePath}
+                  onNavigate={onNavigate}
+                  depth={0}
+                />
+              </React.Fragment>
+            )
+          }
           return (
             <FolderCollapsible
               key={folder.$id ?? i}

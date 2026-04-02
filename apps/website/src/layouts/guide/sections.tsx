@@ -1,4 +1,4 @@
-import { MousePointer2, Palette, TestTubeDiagonal, type LucideIcon } from 'lucide-react'
+import { Book, Palette, Archive, type LucideIcon } from 'lucide-react'
 
 export type GuideSection = {
   value: string
@@ -12,16 +12,16 @@ export const GUIDE_SECTIONS = [
   {
     value: 'guide',
     base: '/guide',
-    label: 'Guide',
-    description: 'Current documentation',
-    icon: MousePointer2,
+    label: 'whatsapp-web.js',
+    description: 'Current Guide',
+    icon: Book,
   },
   {
     value: 'legacy',
     base: '/guide/legacy',
-    label: 'Legacy',
-    description: 'v1 documentation',
-    icon: TestTubeDiagonal,
+    label: 'whatsapp-web.js',
+    description: 'Legacy Guide',
+    icon: Archive,
   },
   {
     value: 'formatters',

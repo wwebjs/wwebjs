@@ -47,6 +47,7 @@ export function GuideSidebar({
                 nodes={tree.children as PageTreeNode[]}
                 activePath={activePath}
                 onNavigate={setPendingPath}
+                section
               />
               <div className="h-[30px] shrink-0" />
             </SidebarMenu>
