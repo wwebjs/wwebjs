@@ -1,0 +1,20 @@
+---
+title: Comparisons
+icon: Scale
+---
+
+Developers often compare three unofficial stacks:
+
+1. `whatsapp-web.js`, a browser driven Node.js integration.
+2. `Baileys` (WhiskeySockets), a Node.js WebSocket implementation.
+3. `WhatsMeow`, a Go based WebSocket implementation.
+
+| Feature                      | whatsapp-web.js                  | Baileys (WhiskeySockets)  | WhatsMeow                 |
+| ---------------------------- | -------------------------------- | ------------------------- | ------------------------- |
+| Runtime model                | Browser (Puppeteer)              | Protocol (WebSocket)      | Protocol (WebSocket)      |
+| Primary ecosystem            | Node.js                          | Node.js                   | Go                        |
+| API abstraction              | High level                       | Medium level              | Medium level              |
+| Onboarding speed             | Fast                             | Medium                    | Medium                    |
+| Runtime overhead             | Higher                           | Lower                     | Lower                     |
+| Resource usage (CPU and RAM) | Higher, browser process included | Lower, no browser process | Lower, no browser process |
+| Browser dependency           | Yes                              | No                        | No                        |

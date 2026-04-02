@@ -1,0 +1,4 @@
+{
+  "title": "Your Application",
+  "pages": ["create-your-app", "authentication", "event-handler", "command-handler"]
+}

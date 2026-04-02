@@ -1,0 +1,125 @@
+---
+title: Quick Start
+notice: Read the [Disclaimer](./disclaimer) before you start, whatsapp-web.js is unofficial and should be used responsibly to prevent getting blocked from WhatsApp.
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps'
+
+import { CpuIcon, PanelsTopLeftIcon, DatabaseIcon, TerminalIcon } from 'lucide-react'
+
+## Introduction
+
+**whatsapp-web.js** <span className='text-fd-muted-foreground text-sm'>(WWebJS)</span> is a Node.js library for interacting with WhatsApp Web, using Puppeteer to run a managed browser and reduce blocking risk.
+
+WWebJS has different parts:
+
+<Cards>
+
+<Card icon={<CpuIcon className="text-purple-300" />} title='whatsapp-web.js' href='https://github.com/wwebjs/whatsapp-web.js'>
+
+Handles client, messages, chats, and communication with WhatsApp Web.
+
+</Card>
+
+<Card icon={<PanelsTopLeftIcon className="text-blue-300" />} title='WWebJS Core'  href='https://github.com/wwebjs/wwebjs/tree/main/packages/core'>
+
+Utilities for sessions, authentication, and client lifecycle.
+
+</Card>
+
+<Card icon={<DatabaseIcon />} title='WWebJS Formatters' href='https://github.com/wwebjs/wwebjs/tree/main/packages/formatters'>
+
+Tools for formatting messages and media.
+
+</Card>
+
+<Card icon={<TerminalIcon />} title='WWebJS CLI' href='https://github.com/wwebjs/wwebjs/tree/main/packages/cli'>
+
+CLI tools for setting up your app.
+
+</Card>
+
+</Cards>
+
+{/* prettier-ignore */}
+<Callout title="Want to learn more?">
+  1. [What is WWebJS](/guide/what-is-wwebjs) to understand capabilities and limits
+  2. [Disclaimer](/guide/what-is-wwebjs/disclaimer) to understand risks and limitations
+  3. [Installation](/guide/setup/getting-started/installation) to prepare your environment
+  4. [Project Setup](/guide/setup/getting-started/project-setup) to wire events and handlers cleanly
+  5. [Authentication](/guide/your-application/authentication) to pick the right session strategy for your use case
+  6. [Create Your App](/guide/your-application/create-your-app) to structure your first project
+
+</Callout>
+
+## Automatic Installation
+
+A minimum version of Node.js 18 is required.
+
+```npm
+npm create wwebjs-app
+```
+
+It will ask you the built-in steps:
+
+<Steps>
+  <Step>
+    **Project name**
+
+    Choose the name for your new project.
+
+  </Step>
+
+  <Step>
+    **Select a template:**
+
+    - JavaScript
+    - TypeScript
+
+  </Step>
+
+  <Step>
+    **Use a `src/` directory?**
+
+    Decide whether your files should be placed in a dedicated `src/` folder.
+
+  </Step>
+
+  <Step>
+    **Auth strategy:**
+
+    - NoAuth (no session persistence)
+    - LocalAuth (local session storage)
+    - RemoteAuth (database session storage)
+
+  </Step>
+
+  <Step>
+    **Package manager**
+
+    Choose your preferred package manager
+    - `npm`
+    - `pnpm`
+    - `yarn`
+
+  </Step>
+
+  <Step>
+    **Install dependencies automatically?**
+
+    Confirm whether the CLI should install dependencies right away.
+
+  </Step>
+</Steps>
+
+<Callout title="From Existing Codebase?">
+  You can follow the [Manual Installation](/guide/setup/getting-started/installation) guide to get started.
+</Callout>
+
+## Enjoy!
+
+Create your first Application
+
+## FAQ
+
+For common questions about setup, authentication and usage, check out the [FAQ](/guide/faq).

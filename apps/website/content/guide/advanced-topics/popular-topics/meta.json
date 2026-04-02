@@ -1,0 +1,15 @@
+{
+  "title": "Popular Topics",
+  "pages": [
+    "common-errors",
+    "formatters",
+    "permissions",
+    "spam",
+    "reactions",
+    "buttons",
+    "lists",
+    "account-ban",
+    "media",
+    "proxy"
+  ]
+}

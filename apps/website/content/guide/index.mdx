@@ -1,99 +1,28 @@
 ---
-title: Quick Start
-description: This guide is designed to help you build a reliable system by focusing on architecture choices, event flow and session strategy decisions. whatsapp-web.js (wwebjs), is a Node.js library that lets you interact with WhatsApp Web and build a dynamic API with most of the features available in the web client. The library runs on Puppeteer, which controls a browser instance to access WhatsApp Web’s internal functions while helping reduce the risk of being blocked.
-notice: Read the [Disclaimer](./disclaimer) before you start. whatsapp web js is unofficial and should be used responsibly.
+title: Introduction
+icon: Info
 ---
 
-import { Card, Cards } from 'fumadocs-ui/components/card'
+If you’re here, you’re probably interested in creating a WhatsApp bot or application using whatsapp-web.js. This guide will walk you through it.
 
-## Learning path
+- Start your App from [scratch](/guide/setup/getting-started/installation)
+- Handling [messages and events](/guide/your-application/event-handler) properly
+- Structuring your [code](/guide/your-application/create-your-app) so it stays clean as it grows
+- Choosing the right [authentication](/guide/your-application/authentication) strategy for your use case
+- Working with [chats](/guide/components/chats), [groups](/guide/components/groups), [contacts](/guide/components/contacts) and [media](/guide/components/messages)
+- [Best practices](/guide/what-is-wwebjs/disclaimer) to avoid getting blocked
+- And much more
 
-1. [What is WWebJS](./what-is-wwebjs), to understand capabilities and limits.
-2. [Requirements](../requirements), to prepare technical and operational prerequisites.
-3. [Installation](../getting-started/installation), to build a stable local baseline.
-4. [Project Structure](../getting-started/project-structure), to keep your code scalable.
-5. [Application Setup](../getting-started/app-setup), to wire events and handlers cleanly.
-6. [Authentication](../authentication), to choose the right session model.
-7. [Messages](../messages), to implement robust input and reply flows.
-8. [Chats](../chats), [Groups](../groups), and [Contacts](../contacts), to work with real world data models.
+## Before you begin
 
-## Quick start
+To develop an application with whatsapp-web.js, you should be reasonably comfortable with JavaScript and Node.js. While it is possible to assemble something with minimal knowledge, doing so without understanding the fundamentals will slow you down. You’ll likely encounter simple issues that become blockers and lead to unnecessary frustration.
 
-This example gives you a small but clean baseline.
+If you’re not yet confident with Node.js or JavaScript, review the following resources before proceeding:
 
-```javascript
-const { Client, LocalAuth } = require('whatsapp-web.js')
-const qrcode = require('qrcode-terminal')
+- [Official Node.js Docs](https://nodejs.org/en/docs)
+- [Node.js Guides](https://nodejs.org/en/learn)
+- [W3Schools Node.js Tutorial](https://www.w3schools.com/nodejs/)
+- [GeeksforGeeks Node.js Tutorial](https://www.geeksforgeeks.org/nodejs/)
+- [TutorialsPoint Node.js](https://www.tutorialspoint.com/nodejs/index.htm)
 
-const client = new Client({ authStrategy: new LocalAuth() })
-
-client.on('qr', qr => qrcode.generate(qr, { small: true }))
-client.on('ready', () => console.log('app ready!'))
-client.on('message_create', msg => {
-  if (msg.body === '!ping') msg.reply('Pong!')
-})
-
-client.initialize()
-```
-
-Install dependencies:
-
-```bash
-npm install whatsapp-web.js qrcode-terminal
-```
-
-Run the app:
-
-```bash
-node index.js
-```
-
-Scan the QR code on first run. With `LocalAuth`, your session stays persisted for next starts.
-
-## What you will deepen next
-
-1. How to structure event flow without duplicate responses.
-2. How to handle message types and media safely.
-3. How to implement error handling and observability.
-4. How to align authentication with deployment constraints.
-
-## Safety and compliance notice
-
-Because this library is unofficial, define your operating boundaries before production:
-
-1. Which policy and account risks apply to your use case.
-2. Which data you store and for how long.
-3. Which recovery flow you use for logout or session loss.
-
-## Recommended learning resources
-
-If you need a quick refresh on fundamentals, start with:
-
-1. [JavaScript.info](https://javascript.info/)
-2. [Node.js Documentation](https://nodejs.org/en/docs/)
-3. [EventEmitter Basics](https://nodejs.org/api/events.html)
-
-Choose the entry that best matches your current stage.
-
-<Cards>
-  <Card
-    title="Start with concepts"
-    description="Understand architecture, limits, and tradeoffs"
-    href="/guide/what-is-wwebjs"
-  />
-  <Card
-    title="Build your setup"
-    description="Create a stable local environment step by step"
-    href="/guide/getting-started/installation"
-  />
-  <Card
-    title="Choose auth model"
-    description="Pick NoAuth, LocalAuth, or RemoteAuth for your runtime"
-    href="/guide/authentication"
-  />
-  <Card
-    title="Get community help"
-    description="Discuss real issues and implementation details"
-    href="https://discord.wwebjs.dev/"
-  />
-</Cards>
+Work through a few of these until you’re comfortable with the basics. Once you can confidently write and reason about simple programs, return and continue with the guide.
