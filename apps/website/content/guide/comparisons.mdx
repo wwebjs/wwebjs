@@ -3,19 +3,36 @@ title: Comparisons
 icon: Scale
 ---
 
-Developers often compare three unofficial stacks:
+import { FeatureComparisonTable } from '@/components/feature-comparison-table'
 
-1. `whatsapp-web.js`, a browser driven Node.js integration.
-2. `Baileys` (WhiskeySockets), a Node.js WebSocket implementation.
-3. `WhatsMeow`, a Go based WebSocket implementation.
+It is important to compare libraries and tools before starting your project to make sure you are using the right one for your specific needs.
 
-| Feature                      | whatsapp-web.js                  | Baileys (WhiskeySockets)  | WhatsMeow                 |
-| ---------------------------- | -------------------------------- | ------------------------- | ------------------------- |
-| Runtime model                | Browser (Puppeteer)              | Protocol (WebSocket)      | Protocol (WebSocket)      |
-| Primary ecosystem            | Node.js (JS)                     | Node.js (TS)              | Go                        |
-| API abstraction              | Medium level                     | Highest level             | High level                |
-| Onboarding speed             | Fast (very simple)               | Challenging               | Medium                    |
-| Runtime overhead             | Higher (IPC calls + Chrome)      | Lower                     | Lower                     |
-| Resource usage (CPU and RAM) | Higher, browser process included | Lower, no browser process | Lower, no browser process |
-| Browser dependency           | Yes                              | No                        | No                        |
-| Account safety               | As good as official WA Web       | Lower (direct exposure)   | Lower (direct exposure)   |
+<Callout type="warning">
+  Comparing unonffical libraries to the official WhatsApp API is not always straightforward, as they
+  serve different purposes and have different capabilities. You should keep in mind that unoffical
+  libraries have limitations and may not be suitable for all use cases.
+</Callout>
+
+## whatsapp-web.js
+
+whatsapp-web.js has a bunch of features but is limited to what the WhatsApp Web client can do. This means that some features are not possible to implement.
+
+However, it is a great choice for many use cases, especially if you want to build a application that interacts with WhatsApp in a way that mimics human behavior.
+
+### Feature Table
+
+This list compares [whatsapp-web.js](https://github.com/wwebjs/whatsapp-web.js), [Baileys (WhiskeySockets)](https://github.com/WhiskeySockets/Baileys) and the offical WhatsApp API from Meta.
+
+<FeatureComparisonTable />
+
+## Baileys (WhiskeySockets)
+
+## WPPConnect
+
+WPPConnect is an open-source Node.js library that works with WhatsApp Web and lets developers control WhatsApp through code. It is similar to whatsapp-web.js and is used to connect WhatsApp with applications.
+
+## WhatsApp API (official)
+
+The WhatsApp API (officially the WhatsApp Cloud API / Business API) is Meta's official solution for businesses to send, receive and automate WhatsApp messages at scale. It is commonly used for customer support, notifications and CRM integrations.
+
+Keep in mind that the official WhatsApp API has strict usage policies and is designed for business use cases, while unofficial libraries like whatsapp-web.js and Baileys are more flexible but may have limitations and risks associated with them.
