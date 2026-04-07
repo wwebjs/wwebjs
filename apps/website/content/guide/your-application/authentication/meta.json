@@ -1,4 +1,4 @@
 {
   "title": "Authentication",
-  "pages": ["index", "local-auth", "remote-auth"]
+  "pages": ["local-auth", "remote-auth"]
 }
