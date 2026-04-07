@@ -4,20 +4,30 @@ packages:core:
       - any-glob-to-any-file:
           - packages/core/*
           - packages/core/**/*
-
-# Apps
-apps:guide:
+packages:create-app:
   - changed-files:
       - any-glob-to-any-file:
-          - apps/guide/*
-          - apps/guide/**/*
+          - packages/create-app/*
+          - packages/create-app/**/*
+packages:cli:
+  - changed-files:
+      - any-glob-to-any-file:
+          - packages/cli/*
+          - packages/cli/**/*
+packages:types:
+  - changed-files:
+      - any-glob-to-any-file:
+          - packages/types/*
+          - packages/types/**/*
+packages:formatters:
+  - changed-files:
+      - any-glob-to-any-file:
+          - packages/formatters/*
+          - packages/formatters/**/*
+
+# Apps
 apps:website:
   - changed-files:
       - any-glob-to-any-file:
           - apps/website/*
           - apps/website/**/*
-apps:docs:
-  - changed-files:
-      - any-glob-to-any-file:
-          - apps/docs/*
-          - apps/docs/**/*
