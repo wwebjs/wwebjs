@@ -16,6 +16,46 @@ import {
 } from '@/components/ui/sidebar'
 import { hasActivePage } from './utils'
 
+function FolderIndexLink({
+  index,
+  activePath,
+  onNavigate,
+  depth,
+}: {
+  index: NonNullable<PageTreeFolder['index']>
+  activePath: string
+  onNavigate: (url: string) => void
+  depth: number
+}) {
+  const isActive = activePath === index.url
+  const className = cn(
+    'min-h-[30px] h-auto py-1 text-[0.8rem] font-medium',
+    isActive ? 'bg-accent! text-accent-foreground!' : 'hover:bg-accent/50!'
+  )
+  const linkEl = <Link href={index.url} onClick={() => onNavigate(index.url)} />
+
+  if (depth > 0) {
+    return (
+      <SidebarMenuSubItem>
+        <SidebarMenuSubButton render={linkEl} isActive={isActive} className={className}>
+          {index.name as string}
+        </SidebarMenuSubButton>
+      </SidebarMenuSubItem>
+    )
+  }
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        render={linkEl}
+        isActive={isActive}
+        className={cn('relative w-full', className)}
+      >
+        {index.name as string}
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  )
+}
+
 function FolderCollapsible({
   folder,
   activePath,
@@ -49,6 +89,14 @@ function FolderCollapsible({
         }`}
       >
         <SidebarMenuSub className="gap-[3px] mr-0 pr-0 border-l-0 relative before:absolute before:left-0 before:top-[6px] before:bottom-[2px] before:w-px before:bg-border">
+          {folder.index && (
+            <FolderIndexLink
+              index={folder.index}
+              activePath={activePath}
+              onNavigate={onNavigate}
+              depth={depth + 1}
+            />
+          )}
           <SidebarNodes
             nodes={children}
             activePath={activePath}
@@ -136,6 +184,14 @@ export function SidebarNodes({
                 <SidebarGroupLabel className="mt-4 text-xs font-medium text-muted-foreground">
                   {folder.name as string}
                 </SidebarGroupLabel>
+                {folder.index && (
+                  <FolderIndexLink
+                    index={folder.index}
+                    activePath={activePath}
+                    onNavigate={onNavigate}
+                    depth={0}
+                  />
+                )}
                 <SidebarNodes
                   nodes={folder.children as PageTreeNode[]}
                   activePath={activePath}

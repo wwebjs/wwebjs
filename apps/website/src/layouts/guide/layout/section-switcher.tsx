@@ -16,7 +16,7 @@ export function DocsSwitcher() {
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger className="flex w-full items-center gap-2 rounded-lg border bg-secondary/50 p-2 text-start text-secondary-foreground transition-colors hover:bg-accent hover:text-accent-foreground data-[open]:bg-accent data-[open]:text-accent-foreground">
+      <PopoverTrigger className="flex w-full items-center gap-2 rounded-lg bg-secondary p-2 text-start text-secondary-foreground transition-colors hover:bg-accent hover:text-accent-foreground data-[open]:bg-accent data-[open]:text-accent-foreground">
         <div className="min-w-0 flex-1">
           <p className="flex items-center gap-2 text-sm font-medium">
             <selected.icon className="size-[18px] shrink-0" />

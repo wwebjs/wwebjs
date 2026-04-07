@@ -1,4 +1,4 @@
 {
   "title": "Libraries",
-  "pages": ["index", "cli", "formatters", "create-wwebjs-app"]
+  "pages": ["cli", "formatters", "create-wwebjs-app"]
 }
