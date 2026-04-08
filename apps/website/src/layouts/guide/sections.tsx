@@ -4,6 +4,7 @@ export type GuideSection = {
   value: string
   base: string
   label: string
+  displayName: string
   description: string
   icon: LucideIcon
 }
@@ -13,6 +14,7 @@ export const GUIDE_SECTIONS = [
     value: 'guide',
     base: '/guide',
     label: 'whatsapp-web.js',
+    displayName: 'Guide',
     description: 'Current Guide',
     icon: Book,
   },
@@ -20,6 +22,7 @@ export const GUIDE_SECTIONS = [
     value: 'legacy',
     base: '/guide/legacy',
     label: 'whatsapp-web.js',
+    displayName: 'Legacy Guide',
     description: 'Legacy Guide',
     icon: Archive,
   },
@@ -27,6 +30,7 @@ export const GUIDE_SECTIONS = [
     value: 'formatters',
     base: '/guide/formatters',
     label: 'Formatters',
+    displayName: 'Formatters',
     description: 'Message formatter',
     icon: Palette,
   },
@@ -35,7 +39,7 @@ export const GUIDE_SECTIONS = [
 /** Returns `{ name, url }` for use as a breadcrumb root crumb. */
 export function getSectionCrumb(value: string): { name: string; url: string } {
   const section = GUIDE_SECTIONS.find(s => s.value === value) ?? GUIDE_SECTIONS[0]
-  return { name: section.label, url: section.base }
+  return { name: section.displayName, url: section.base }
 }
 
 /** Returns the active section for a given pathname. Longer bases match first. */
