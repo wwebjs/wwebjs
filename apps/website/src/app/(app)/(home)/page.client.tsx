@@ -1,9 +1,19 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Examples } from './examples'
-import dynamic from 'next/dynamic'
 import { Installation } from './installation'
+
+const NpmDownloadsChartDynamic = dynamic(
+  () => import('./statistics/npm-downloads-chart').then(m => m.NpmDownloadsChart),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="rounded-xl border border-border bg-card h-[280px] animate-pulse" />
+    ),
+  }
+)
 
 export function HomeTabs() {
   return (
@@ -14,6 +24,9 @@ export function HomeTabs() {
         </TabsTrigger>
         <TabsTrigger className="text-base" value="examples">
           Examples
+        </TabsTrigger>
+        <TabsTrigger className="text-base" value="statistics">
+          Statistics
         </TabsTrigger>
       </TabsList>
 
@@ -26,6 +39,12 @@ export function HomeTabs() {
       <TabsContent value="examples">
         <div className="pb-24">
           <Examples />
+        </div>
+      </TabsContent>
+
+      <TabsContent value="statistics">
+        <div className="space-y-8 pb-24">
+          <NpmDownloadsChartDynamic />
         </div>
       </TabsContent>
     </Tabs>
