@@ -21,7 +21,7 @@ export type CrumbSegment =
   | { type: 'link'; name: string; url: string }
   | { type: 'label'; name: string }
   | { type: 'page'; name: string }
-  | { type: 'ellipsis' }
+  | { type: 'ellipsis'; hidden: CrumbSegment[] }
 
 type FolderNode = Extract<Node, { type: 'folder' }>
 
@@ -30,8 +30,6 @@ function folderCrumb(node: FolderNode, next: Node | undefined): CrumbSegment {
   if (node.index === next || !node.index?.url) return { type: 'label', name }
   return { type: 'link', name, url: node.index.url }
 }
-
-const COLLAPSE_THRESHOLD = 40
 
 export function getPageCrumbs(
   tree: Root,
@@ -55,17 +53,8 @@ export function getPageCrumbs(
 
   if (!raw.length) return []
 
-  const ancestors = raw.slice(0, -1)
-  const currentPage = raw[raw.length - 1]
-
-  if (ancestors.length === 0 && root) {
-    return [{ type: 'link', name: root.name, url: root.url }, currentPage]
-  }
-
-  const totalLen = ancestors.reduce((sum, s) => sum + ('name' in s ? s.name.length : 0), 0)
-
-  if (totalLen > COLLAPSE_THRESHOLD && ancestors.length > 1) {
-    return [{ type: 'ellipsis' }, currentPage]
+  if (root) {
+    return [{ type: 'link', name: root.name, url: root.url }, ...raw]
   }
 
   return raw
