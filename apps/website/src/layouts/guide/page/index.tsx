@@ -5,9 +5,9 @@ import { PageFooter } from './footer'
 import { DocsBody } from 'fumadocs-ui/page'
 
 import type { CrumbSegment } from '@/lib/page-tree'
+import type { Neighbour } from './header'
 
 type TocItem = { title?: React.ReactNode; url: string; depth: number }
-type Neighbour = { url: string; name: React.ReactNode } | undefined
 
 type GuidePageContentProps = {
   title: string
@@ -63,10 +63,8 @@ export function GuidePageContent({
             githubUrl={githubUrl}
           />
 
-          <div className="h-px w-full bg-border mb-6" />
-
           {/* MDX content */}
-          <DocsBody className="w-full flex-1 pb-16 *:data-[slot=alert]:first:mt-0 sm:pb-0">
+          <DocsBody className="mt-6 w-full flex-1 pb-16 *:data-[slot=alert]:first:mt-0 sm:pb-0">
             <MDX components={getMDXComponents()} />
           </DocsBody>
 

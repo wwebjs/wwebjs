@@ -4,6 +4,7 @@ import prettier from 'eslint-config-prettier';
 import tseslint from 'typescript-eslint';
 import tsParser from '@typescript-eslint/parser';
 import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript';
+import globals from 'globals';
 
 const commonFiles = '{js,mjs,cjs,ts,mts,cts,jsx,tsx}';
 
@@ -67,6 +68,13 @@ export default defineConfig(
 
   {
     rules: {},
+  },
+
+  {
+    files: ['scripts/**/*.mjs'],
+    languageOptions: {
+      globals: globals.node,
+    },
   },
 
   prettier,
