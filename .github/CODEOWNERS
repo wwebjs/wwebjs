@@ -1,4 +1,11 @@
 # Learn how to add code owners here:
 # https://help.github.com/articles/about-code-owners
 
-* @wwebjs/members
+package.json @wwebjs/core
+pnpm-lock.yaml @wwebjs/core
+
+/appes/website/ @wwebjs/website
+
+/packages/formatters/ @wwebjs/formatters
+/packages/create-app/ @wwebjs/cli
+/packages/core/ @wwebjs/core
