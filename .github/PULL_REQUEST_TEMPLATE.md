@@ -1,5 +1,3 @@
-# Pull Request
-
 ## Description
 
 <!-- What does this PR change and why? -->
@@ -17,10 +15,6 @@ Examples:
 For more details, see:
 https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue
 -->
-
-## How Has This Been Tested?
-
-<!-- Describe in detail how you tested your changes. -->
 
 ## Type of Change
 
