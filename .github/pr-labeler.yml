@@ -14,11 +14,6 @@ packages:cli:
       - any-glob-to-any-file:
           - packages/cli/*
           - packages/cli/**/*
-packages:types:
-  - changed-files:
-      - any-glob-to-any-file:
-          - packages/types/*
-          - packages/types/**/*
 packages:formatters:
   - changed-files:
       - any-glob-to-any-file:
