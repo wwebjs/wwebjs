@@ -1,4 +1,4 @@
-export interface Template {
+export interface Language {
   id: string;
   label: string;
   description: string;
@@ -11,7 +11,7 @@ export interface AuthStrategy {
   init: string;
 }
 
-export const TEMPLATES: Template[] = [
+export const LANGUAGES: Language[] = [
   {
     id: 'javascript',
     label: 'JavaScript',
@@ -43,7 +43,7 @@ export const AUTH_STRATEGIES: AuthStrategy[] = [
     description: 'Remote session storage (MongoDB, S3, etc.)',
     init: [
       'new RemoteAuth({',
-      '    // TODO: configure your store - https://wwebjs.2hoch1.dev/guide/authentication',
+      '    // TODO: configure your store - https://wwebjs.dev/guide/authentication',
       '    store: null,',
       '    backupSyncIntervalMs: 300000,',
       '  })',
