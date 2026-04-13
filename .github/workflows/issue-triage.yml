@@ -1,4 +1,4 @@
-name: Issue Labeler
+name: Issue Triage
 
 on:
   issues:
@@ -8,8 +8,13 @@ permissions:
   contents: read
   issues: write
 
+concurrency:
+  group: issue-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
 jobs:
   label:
+    name: Label Issue
     runs-on: ubuntu-latest
     steps:
       - name: Label issue

@@ -1,0 +1,185 @@
+---
+title: Chats
+description: Load, inspect, and manage chat entities with practical patterns for robust runtime behavior.
+---
+
+## Chat model essentials
+
+A chat represents the conversation container. Message handling is safer when your code can reliably map an incoming event to the correct chat context.
+
+## Fetch All Chats
+
+`client.getChats()` returns every conversation the account has, sorted by most recent:
+
+```javascript
+const chats = await client.getChats()
+console.log(`You have ${chats.length} chats`)
+```
+
+## Get a Chat by ID
+
+```javascript
+// Private chat, phone number + @c.us
+const chat = await client.getChatById('15551234567@c.us')
+
+// Group chat, group ID + @g.us
+const group = await client.getChatById('120363021234567890@g.us')
+```
+
+## Chat Properties
+
+| Property           | Description                     |
+| ------------------ | ------------------------------- |
+| `chat.id`          | Unique chat identifier          |
+| `chat.name`        | Display name                    |
+| `chat.isGroup`     | `true` for group chats          |
+| `chat.isReadOnly`  | `true` for broadcast lists      |
+| `chat.unreadCount` | Number of unread messages       |
+| `chat.timestamp`   | Last message timestamp          |
+| `chat.pinned`      | Whether the chat is pinned      |
+| `chat.isMuted`     | Whether notifications are muted |
+| `chat.archived`    | Whether the chat is archived    |
+
+## Reliable lookup strategy
+
+When possible, prefer deriving the chat from incoming message context instead of hard coding IDs.
+
+```javascript
+client.on('message_received', async msg => {
+  const chat = await msg.getChat()
+  console.log('Active chat:', chat.id._serialized)
+})
+```
+
+## Fetch Recent Messages
+
+`chat.fetchMessages()` loads messages from the conversation history:
+
+```javascript
+const chat = await client.getChatById('15551234567@c.us')
+const messages = await chat.fetchMessages({ limit: 20 })
+
+for (const msg of messages) {
+  console.log(`[${msg.fromMe ? 'Me' : msg.from}] ${msg.body}`)
+}
+```
+
+## Send a Message to a Chat
+
+```javascript
+const chat = await client.getChatById('15551234567@c.us')
+await chat.sendMessage('Hello from the app!')
+```
+
+## Get Pinned Messages
+
+```javascript
+const chat = await client.getChatById('15551234567@c.us')
+const pinned = await chat.getPinnedMessages()
+pinned.forEach(msg => console.log('Pinned:', msg.body))
+```
+
+## Mark Chat as Seen
+
+```javascript
+const chat = await client.getChatById('15551234567@c.us')
+await chat.sendSeen()
+```
+
+## Operational tips
+
+1. Keep chat lookup and message routing separate.
+2. Avoid expensive full chat scans on every event.
+3. Cache only short lived metadata unless you need long term analytics.
+
+## Managing Chats
+
+Archive, pin, mute, mark as unread, and delete chats programmatically.
+
+### Archive and Unarchive
+
+Move a chat to the archive or restore it:
+
+```javascript
+const chat = await client.getChatById('15551234567@c.us')
+
+await chat.archive()
+await chat.unarchive()
+```
+
+### Pin and Unpin
+
+Keep important chats at the top of the list:
+
+```javascript
+await chat.pin()
+await chat.unpin()
+```
+
+### Mute Notifications
+
+Mute a chat for a duration in milliseconds, or indefinitely by passing `null`:
+
+```javascript
+// Mute for 8 hours
+await chat.mute(8 * 60 * 60 * 1000)
+
+// Mute indefinitely
+await chat.mute(null)
+
+// Unmute
+await chat.unmute()
+```
+
+## Mark as Unread
+
+Flag a chat so it appears as having unread messages:
+
+```javascript
+await chat.markUnread()
+```
+
+### Delete a Chat
+
+Remove the chat from the list. This only removes it from the app's view, not from the other participant's side:
+
+```javascript
+await chat.delete()
+```
+
+### Typing and Recording Indicators
+
+Show the "typing..." or "recording audio..." state while the app is working:
+
+```javascript
+client.on('message_received', async msg => {
+  const chat = await msg.getChat()
+
+  // Show typing indicator
+  await chat.sendStateTyping()
+
+  await new Promise(r => setTimeout(r, 2000))
+
+  // Clear the indicator before sending
+  await chat.clearState()
+  await msg.reply('Done!')
+})
+```
+
+For voice-message style apps, use the recording indicator:
+
+```javascript
+await chat.sendStateRecording()
+await new Promise(r => setTimeout(r, 3000))
+await chat.clearState()
+```
+
+### Listen for Chat Updates
+
+The `chat_removed` event fires when the app leaves or deletes a conversation:
+
+```javascript
+client.on('chat_removed', chat => {
+  console.log('Chat removed:', chat.name)
+})
+```

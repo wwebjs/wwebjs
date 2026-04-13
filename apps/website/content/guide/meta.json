@@ -1,24 +1,17 @@
 {
   "title": "Guide",
-  "description": "The description of root folder (optional)",
   "pages": [
     "faq",
-    "---Introduction---",
     "index",
+    "comparisons",
     "what-is-wwebjs",
-    "disclaimer",
-    "---Setup---",
-    "requirements",
-    "getting-started",
-    "---Your Application---",
-    "authentication",
-    "messages",
-    "chats",
-    "groups",
-    "contacts",
-    "---Advanced---",
-    "advanced",
-    "contributing"
+    "setup",
+    "your-application",
+    "components",
+    "business-features",
+    "advanced-topics",
+    "contributing",
+    "advanced"
   ],
   "root": true
 }

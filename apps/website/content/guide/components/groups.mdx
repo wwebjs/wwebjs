@@ -1,0 +1,246 @@
+---
+title: Groups
+description: Create and manage group chats with participant controls, settings, and safe event handling.
+---
+
+## Group runtime context
+
+Group behavior differs from direct chats because sender identity, permissions, and moderation
+events must be tracked explicitly.
+
+## Create a group
+
+`client.createGroup()` takes a title and an array of participant IDs:
+
+```javascript
+const result = await client.createGroup('My app Group', ['15551234567@c.us', '15559876543@c.us'])
+
+console.log('Group ID:', result.gid._serialized)
+```
+
+## Get a group chat
+
+Retrieve an existing group the same way as any chat:
+
+```javascript
+const group = await client.getChatById('120363021234567890@g.us')
+console.log('Group name:', group.name)
+```
+
+## GroupChat properties
+
+| Property               | Description                             |
+| ---------------------- | --------------------------------------- |
+| `group.id`             | Unique group identifier                 |
+| `group.name`           | Group display name                      |
+| `group.description`    | Group description                       |
+| `group.participants`   | Array of participant objects            |
+| `group.owner`          | ID of the group creator                 |
+| `group.isAnnouncement` | `true` if only admins can send messages |
+| `group.isCommunity`    | `true` if this is a community group     |
+
+## List participants
+
+```javascript
+const group = await client.getChatById('120363021234567890@g.us')
+
+for (const participant of group.participants) {
+  console.log(participant.id._serialized, participant.isAdmin ? '(admin)' : '')
+}
+```
+
+## Leave a group
+
+```javascript
+const group = await client.getChatById('120363021234567890@g.us')
+await group.leave()
+```
+
+## Listen for group events
+
+```javascript
+// Someone joined the group
+client.on('group_join', notification => {
+  console.log('Joined:', notification.id.participant)
+})
+
+// Someone left the group
+client.on('group_leave', notification => {
+  console.log('Left:', notification.id.participant)
+})
+
+// Group info was changed (name, description, icon)
+client.on('group_update', notification => {
+  console.log('Group updated:', notification.type)
+})
+
+// Admin status changed
+client.on('group_admin_changed', notification => {
+  console.log('Admin changed:', notification.id.participant)
+})
+```
+
+## Defensive group handling
+
+```javascript
+client.on('message_received', async msg => {
+  if (!msg.isGroup) return
+
+  const chat = await msg.getChat()
+  if (!chat.isGroup) return
+
+  if (msg.body === '!group-info') {
+    await msg.reply(`Group: ${chat.name}, Members: ${chat.participants.length}`)
+  }
+})
+```
+
+## Participant management
+
+### Add participants
+
+`groupChat.addParticipants()` takes an array of contact IDs:
+
+```javascript
+const group = await client.getChatById('120363021234567890@g.us')
+await group.addParticipants(['15551234567@c.us', '15559876543@c.us'])
+```
+
+### Remove participants
+
+```javascript
+await group.removeParticipants(['15551234567@c.us'])
+```
+
+### Promote to admin
+
+```javascript
+await group.promoteParticipants(['15551234567@c.us'])
+```
+
+### Demote from admin
+
+```javascript
+await group.demoteParticipants(['15551234567@c.us'])
+```
+
+### Get the invite link
+
+Generate a link anyone can use to join the group:
+
+```javascript
+const group = await client.getChatById('120363021234567890@g.us')
+const link = await group.getInviteCode()
+console.log('Invite link: https://chat.whatsapp.com/' + link)
+```
+
+### Join via invite link
+
+Accept an invite link to join the group:
+
+```javascript
+// Pass only the code part, not the full URL
+await client.acceptInvite('AbCdEfGhIjKlMnOpQrStUv')
+```
+
+### Revoke the invite link
+
+Generate a new invite code, invalidating the old one:
+
+```javascript
+await group.revokeInvite()
+```
+
+### Auto-welcome new members
+
+Send a welcome message whenever someone joins:
+
+```javascript
+client.on('group_join', async notification => {
+  const chat = await notification.getChat()
+  await chat.sendMessage(`Welcome, @${notification.id.participant.split('@')[0]}!`, {
+    mentions: [await client.getContactById(notification.id.participant)],
+  })
+})
+```
+
+### Auto-respond to leave events
+
+```javascript
+client.on('group_leave', async notification => {
+  const chat = await notification.getChat()
+  await chat.sendMessage('A member has left the group.')
+})
+```
+
+## Group settings
+
+### Change the group name
+
+```javascript
+const group = await client.getChatById('120363021234567890@g.us')
+await group.setSubject('New Group Name')
+```
+
+### Change the description
+
+```javascript
+await group.setDescription('Welcome to the official support group.')
+```
+
+### Announcement mode
+
+In announcement mode only admins can send messages. Toggle it on and off:
+
+```javascript
+// Only admins can send messages
+await group.setAnnouncement(true)
+
+// Everyone can send messages
+await group.setAnnouncement(false)
+```
+
+### Restrict settings editing
+
+Limit who can change the group's name, icon, and description to admins only:
+
+```javascript
+// Only admins can edit group info
+await group.setInfoAdminsOnly(true)
+
+// All participants can edit group info
+await group.setInfoAdminsOnly(false)
+```
+
+### Set group picture
+
+Send a `MessageMedia` object as the group icon:
+
+```javascript
+const { MessageMedia } = require('whatsapp-web.js')
+const media = MessageMedia.fromFilePath('./group-icon.jpg')
+await group.setPicture(media)
+```
+
+### Delete group picture
+
+```javascript
+await group.deletePicture()
+```
+
+### Listen for setting changes
+
+`group_update` fires whenever the group name, description, or icon changes:
+
+```javascript
+client.on('group_update', async notification => {
+  const chat = await notification.getChat()
+  console.log(`Group "${chat.name}" was updated:`, notification.type)
+})
+```
+
+## Operational recommendations
+
+1. Validate admin rights before state changing actions.
+2. Keep moderation actions auditable in logs.
+3. Handle join and leave events separately from command logic.

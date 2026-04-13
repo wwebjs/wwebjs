@@ -1,0 +1,4 @@
+{
+  "title": "Getting Started",
+  "pages": ["user-setup", "project-setup", "installation", "linters"]
+}

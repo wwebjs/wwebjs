@@ -1,9 +1,10 @@
-import React from 'react'
+'use client'
+
+import React, { useRef, useState, useLayoutEffect } from 'react'
 import Link from 'next/link'
 
 import {
   Breadcrumb,
-  BreadcrumbEllipsis,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
@@ -11,6 +12,13 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
 import type { CrumbSegment } from '@/lib/page-tree'
+import { EllipsisDropdown } from './breadcrumb-ellipsis'
+
+const COLLAPSE_BUFFER = 16
+
+function crumbText(seg: CrumbSegment): string {
+  return 'name' in seg ? seg.name : '…'
+}
 
 function renderSegment(seg: CrumbSegment) {
   switch (seg.type) {
@@ -33,27 +41,69 @@ function renderSegment(seg: CrumbSegment) {
         </BreadcrumbItem>
       )
     case 'ellipsis':
-      return (
-        <BreadcrumbItem>
-          <BreadcrumbEllipsis />
-        </BreadcrumbItem>
-      )
+      return <EllipsisDropdown hidden={seg.hidden} />
   }
 }
 
 export function PageBreadcrumb({ crumbs }: { crumbs: CrumbSegment[] }) {
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const hiddenRef = useRef<HTMLDivElement>(null)
+  const [collapsed, setCollapsed] = useState(false)
+
+  useLayoutEffect(() => {
+    const wrapper = wrapperRef.current
+    const hidden = hiddenRef.current
+    if (!wrapper || !hidden) return
+
+    const check = () => {
+      const naturalWidth = hidden.scrollWidth
+      const availableWidth = wrapper.clientWidth
+      setCollapsed(naturalWidth > availableWidth - COLLAPSE_BUFFER)
+    }
+
+    check()
+    const ro = new ResizeObserver(check)
+    ro.observe(wrapper)
+    return () => ro.disconnect()
+  }, [crumbs])
+
+  const displayCrumbs =
+    collapsed && crumbs.length > 2
+      ? [
+          crumbs[0],
+          { type: 'ellipsis' as const, hidden: crumbs.slice(1, -1) },
+          crumbs[crumbs.length - 1],
+        ]
+      : crumbs
+
   if (!crumbs.length) return null
 
   return (
-    <Breadcrumb className="cursor-default">
-      <BreadcrumbList>
+    <div ref={wrapperRef} className="relative overflow-hidden">
+      {/* Hidden sibling used to measure the natural (unconstrained) width of all crumbs */}
+      <div
+        ref={hiddenRef}
+        aria-hidden
+        className="pointer-events-none invisible absolute flex whitespace-nowrap"
+      >
         {crumbs.map((seg, i) => (
           <React.Fragment key={i}>
-            {i > 0 && <BreadcrumbSeparator />}
-            {renderSegment(seg)}
+            {i > 0 && <span className="mx-1">/</span>}
+            <span>{crumbText(seg)}</span>
           </React.Fragment>
         ))}
-      </BreadcrumbList>
-    </Breadcrumb>
+      </div>
+
+      <Breadcrumb className="cursor-default">
+        <BreadcrumbList>
+          {displayCrumbs.map((seg, i) => (
+            <React.Fragment key={i}>
+              {i > 0 && <BreadcrumbSeparator />}
+              {renderSegment(seg)}
+            </React.Fragment>
+          ))}
+        </BreadcrumbList>
+      </Breadcrumb>
+    </div>
   )
 }

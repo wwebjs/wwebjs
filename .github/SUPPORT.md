@@ -2,6 +2,9 @@
 
 This issue tracker is **only** for bug reports and feature requests.
 
-For questions, installation help, or general support, join our **Discord server**: https://discord.gg/H7DqQs4
+For questions and general help, please join our **Discord server**: [https://discord.wwebjs.dev][discord].
+Installation instructions and guidance can be found in the documentation.
 
-Issues that aren't bugs or feature requests will be closed.
+Issues that are not bug reports, feature requests or questions will be closed.
+
+[discord]: https://discord.wwebjs.dev

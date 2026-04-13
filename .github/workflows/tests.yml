@@ -1,0 +1,57 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build (PR)
+        if: ${{ github.event_name != 'push' }}
+        run: pnpm exec turbo run build --filter="...[origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || 'main' }}]" --concurrency=4
+
+      - name: Build (Push)
+        if: ${{ github.event_name == 'push' }}
+        run: pnpm exec turbo run build --filter="...[HEAD^1]" --concurrency=4
+
+      - name: Tests (PR)
+        if: ${{ github.event_name != 'push' }}
+        run: pnpm exec turbo run test --filter="...[origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || 'main' }}]" --concurrency=4
+
+      - name: Tests (Push)
+        if: ${{ github.event_name == 'push' }}
+        run: pnpm exec turbo run test --filter="...[HEAD^1]" --concurrency=4
+
+      - name: ESLint (PR)
+        if: ${{ github.event_name != 'push' }}
+        run: pnpm exec turbo run lint --filter="...[origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || 'main' }}]" --concurrency=4
+
+      - name: ESLint (Push)
+        if: ${{ github.event_name == 'push' }}
+        run: pnpm exec turbo run lint --filter="...[HEAD^1]" --concurrency=4

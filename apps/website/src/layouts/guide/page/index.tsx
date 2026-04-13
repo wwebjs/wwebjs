@@ -5,9 +5,9 @@ import { PageFooter } from './footer'
 import { DocsBody } from 'fumadocs-ui/page'
 
 import type { CrumbSegment } from '@/lib/page-tree'
+import type { Neighbour } from './header'
 
 type TocItem = { title?: React.ReactNode; url: string; depth: number }
-type Neighbour = { url: string; name: React.ReactNode } | undefined
 
 type GuidePageContentProps = {
   title: string
@@ -63,10 +63,8 @@ export function GuidePageContent({
             githubUrl={githubUrl}
           />
 
-          <div className="h-px w-full bg-border mb-6" />
-
           {/* MDX content */}
-          <DocsBody className="w-full flex-1 pb-16 *:data-[slot=alert]:first:mt-0 sm:pb-0">
+          <DocsBody className="mt-6 w-full flex-1 pb-16 *:data-[slot=alert]:first:mt-0 sm:pb-0">
             <MDX components={getMDXComponents()} />
           </DocsBody>
 
@@ -77,11 +75,9 @@ export function GuidePageContent({
       </div>
 
       {/* TOC */}
-      {toc?.length ? (
-        <div className="sticky top-[var(--header-height)] z-30 ml-auto hidden h-[calc(var(--content-height)-110px)] w-(--sidebar-width) flex-col overflow-hidden overscroll-none xl:flex">
-          <GuideTableOfContents toc={toc} className="pt-10 pl-[22px] pr-8" />
-        </div>
-      ) : null}
+      <div className="sticky top-[var(--header-height)] z-30 ml-auto hidden h-[calc(var(--content-height)-110px)] w-(--sidebar-width) flex-col overflow-hidden overscroll-none xl:flex">
+        <GuideTableOfContents toc={toc ?? []} className="pt-10 pl-[22px] pr-8" />
+      </div>
     </div>
   )
 }

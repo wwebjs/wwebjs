@@ -1,4 +1,4 @@
-name: 'PR Triage'
+name: PR Triage
 
 on:
   pull_request_target:
@@ -12,9 +12,13 @@ permissions:
   contents: read
   pull-requests: write
 
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   label:
-    name: Label
+    name: Label PR
     if: github.event.action != 'edited'
     runs-on: ubuntu-latest
     steps:
@@ -22,7 +26,7 @@ jobs:
         uses: actions/labeler@v5
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          configuration-path: .github/labeler.yml
+          configuration-path: .github/pr-labeler.yml
           dot: true
           sync-labels: true
 
@@ -34,10 +38,11 @@ jobs:
         env:
           TITLE: ${{ github.event.pull_request.title }}
         run: |
-          REGEX="^(revert: )?(feat|fix|docs|style|refactor|perf|test|build|ci|chore|types)(\\(.+\\))?!?: .{1,72}$"
+          REGEX="^(revert: )?(feat|fix|docs|style|refactor|perf|test|build|ci|chore|types|infra|ui)(\\(.+\\))?!?: .{1,72}$"
 
           echo "Title: \"$TITLE\""
 
+          shopt -s nocasematch
           if [[ ! "$TITLE" =~ $REGEX ]]; then
             echo "❌ PR title does not match the required format!"
             exit 1

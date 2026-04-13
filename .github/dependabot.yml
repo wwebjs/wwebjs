@@ -2,37 +2,10 @@ version: 2
 updates:
   - package-ecosystem: 'npm'
     directory: '/'
-    # Run monthly to reduce noise
+    open-pull-requests-limit: 10
     schedule:
       interval: 'monthly'
-    # Limit open PRs from Dependabot
-    open-pull-requests-limit: 10
-    # Create separate PRs per dependency to make review easier
-    # Only propose updates for direct dependencies declared in package.json
-    allow:
-      - dependency-type: 'direct'
-    # Add labels so workflows can detect dependabot PRs
     labels:
       - 'dependencies'
       - 'dependabot'
-    # Prefix for commit messages
-    commit-message:
-      prefix: 'chore(deps)'
-      prefix-development: 'chore(deps-dev)'
-      include: 'scope'
-    # Target branch for PRs
     target-branch: 'main'
-    # Reduce rebase noise; GitHub auto-updates if necessary
-    rebase-strategy: 'disabled'
-    # Group minor/patch updates to cut PR noise
-    groups:
-      prod-dependencies:
-        dependency-type: 'production'
-        update-types:
-          - 'minor'
-          - 'patch'
-      dev-dependencies:
-        dependency-type: 'development'
-        update-types:
-          - 'minor'
-          - 'patch'

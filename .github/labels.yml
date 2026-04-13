@@ -73,9 +73,13 @@
 # Packages & Apps
 - name: packages:core
   color: 5663e9
-- name: apps:guide
-  color: 2e7d32
+- name: packages:create-app
+  color: 5663e9
+- name: packages:cli
+  color: 5663e9
+- name: packages:types
+  color: 5663e9
+- name: packages:formatters
+  color: 5663e9
 - name: apps:website
-  color: 2e7d32
-- name: apps:docs
   color: 2e7d32

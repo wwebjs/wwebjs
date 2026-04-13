@@ -1,0 +1,93 @@
+---
+title: Polls
+description: Create polls, track vote updates, and build deterministic vote processing.
+---
+
+## Send a Poll
+
+Create a `Poll` with a question and an array of option strings, then send it like any other message:
+
+```javascript
+const { Poll } = require('whatsapp-web.js')
+
+client.on('message_received', async msg => {
+  if (msg.body === '!poll') {
+    const poll = new Poll('What is your favorite color?', ['Red', 'Green', 'Blue'])
+    const chat = await msg.getChat()
+    await chat.sendMessage(poll)
+  }
+})
+```
+
+## Allow Multiple Answers
+
+By default, participants can only choose one option. Set `allowMultipleAnswers` to `true` to change this:
+
+```javascript
+const poll = new Poll('Pick your favorites', ['Pizza', 'Sushi', 'Tacos'], {
+  allowMultipleAnswers: true,
+})
+```
+
+## Listen for Votes
+
+The `vote_update` event fires whenever a participant votes or changes their vote:
+
+```javascript
+client.on('vote_update', vote => {
+  console.log('Poll ID:', vote.parentMessage.id._serialized)
+  console.log('Voter:', vote.voter)
+  console.log(
+    'Selected options:',
+    vote.selectedOptions.map(o => o.name)
+  )
+})
+```
+
+## Full Example: Vote Counter
+
+```javascript
+const { Poll } = require('whatsapp-web.js')
+const votes = new Map()
+
+client.on('message_received', async msg => {
+  if (msg.body === '!vote') {
+    const poll = new Poll('Favorite fruit?', ['Apple', 'Banana', 'Cherry'])
+    const sent = await msg.reply(poll)
+    votes.set(sent.id._serialized, {})
+  }
+})
+
+client.on('vote_update', vote => {
+  const pollId = vote.parentMessage.id._serialized
+  if (!votes.has(pollId)) return
+
+  const tally = votes.get(pollId)
+  tally[vote.voter] = vote.selectedOptions.map(o => o.name)
+
+  const counts = {}
+  for (const selections of Object.values(tally)) {
+    for (const option of selections) {
+      counts[option] = (counts[option] || 0) + 1
+    }
+  }
+  console.log('Current tally:', counts)
+})
+```
+
+## Vote processing recommendations
+
+1. Store vote state by poll message ID.
+2. Recompute tallies from tracked voter selections.
+3. Treat updates as mutable, users can change votes.
+4. Keep poll processing isolated from command parsing.
+
+## Lightweight persistence shape
+
+For production, persist poll state with this minimum structure:
+
+1. poll message ID,
+2. chat ID,
+3. voter ID,
+4. selected option IDs,
+5. last update timestamp.

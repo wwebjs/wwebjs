@@ -13,6 +13,10 @@ permissions:
   contents: read
   issues: write
 
+concurrency:
+  group: label-sync
+  cancel-in-progress: true
+
 jobs:
   label-sync:
     name: Label Sync
@@ -20,7 +24,7 @@ jobs:
     if: github.repository_owner == 'wwebjs'
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Label sync
         uses: crazy-max/ghaction-github-labeler@v5
