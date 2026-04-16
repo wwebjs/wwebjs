@@ -197,6 +197,9 @@ importers:
       picocolors:
         specifier: ^1.1.1
         version: 1.1.1
+      tinyexec:
+        specifier: ^1.0.4
+        version: 1.0.4
     devDependencies:
       tsup:
         specifier: ^8.5.0
@@ -6032,7 +6035,7 @@ snapshots:
       ansis: 4.2.0
       fzf: 0.5.2
       package-manager-detector: 1.5.0
-      tinyexec: 1.0.2
+      tinyexec: 1.0.4
 
   '@babel/code-frame@7.27.1':
     dependencies:
@@ -6888,7 +6891,7 @@ snapshots:
       '@commitlint/types': 20.0.0
       git-raw-commits: 4.0.0
       minimist: 1.2.8
-      tinyexec: 1.0.2
+      tinyexec: 1.0.4
 
   '@commitlint/resolve-extends@20.1.0':
     dependencies:
@@ -9831,7 +9834,7 @@ snapshots:
       picocolors: 1.1.1
       picomatch: 4.0.3
       remark-mdx: 3.1.1
-      tinyexec: 1.0.2
+      tinyexec: 1.0.4
       tinyglobby: 0.2.15
       unified: 11.0.5
       unist-util-remove-position: 5.0.0
