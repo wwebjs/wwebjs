@@ -17,3 +17,12 @@ export async function autoInstall(
     nodeOptions: { cwd, stdio: 'inherit' },
   });
 }
+
+export async function initGit(cwd: string): Promise<void> {
+  try {
+    await x('git', ['init'], { nodeOptions: { cwd, stdio: 'ignore' } });
+    await x('git', ['add', '-A'], { nodeOptions: { cwd, stdio: 'ignore' } });
+  } catch {
+    // git not available, skip silently
+  }
+}
