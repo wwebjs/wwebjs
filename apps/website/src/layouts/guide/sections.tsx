@@ -1,4 +1,5 @@
-import { Book, Palette, Archive, type LucideIcon } from 'lucide-react'
+import type { ComponentType } from 'react'
+import { IconArchiveFilled, IconBookFilled, IconPaletteFilled } from '@tabler/icons-react'
 
 export type GuideSection = {
   value: string
@@ -6,7 +7,7 @@ export type GuideSection = {
   label: string
   displayName: string
   description: string
-  icon: LucideIcon
+  icon: ComponentType<{ className?: string }>
 }
 
 export const GUIDE_SECTIONS = [
@@ -15,16 +16,16 @@ export const GUIDE_SECTIONS = [
     base: '/guide',
     label: 'whatsapp-web.js',
     displayName: 'Guide',
-    description: 'Current Guide',
-    icon: Book,
+    description: 'Latest Guide',
+    icon: IconBookFilled,
   },
   {
     value: 'legacy',
     base: '/guide/legacy',
     label: 'whatsapp-web.js',
-    displayName: 'Legacy Guide',
+    displayName: 'Legacy',
     description: 'Legacy Guide',
-    icon: Archive,
+    icon: IconArchiveFilled,
   },
   {
     value: 'formatters',
@@ -32,7 +33,7 @@ export const GUIDE_SECTIONS = [
     label: 'Formatters',
     displayName: 'Formatters',
     description: 'Message formatter',
-    icon: Palette,
+    icon: IconPaletteFilled,
   },
 ] satisfies GuideSection[]
 

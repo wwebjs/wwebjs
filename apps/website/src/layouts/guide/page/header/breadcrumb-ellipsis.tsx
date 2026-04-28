@@ -20,7 +20,7 @@ export function EllipsisDropdown({ hidden }: { hidden: CrumbSegment[] }) {
                 if (seg.type === 'link') {
                   return (
                     <Menu.Item
-                      key={i}
+                      key={seg.url}
                       className="flex cursor-pointer items-center rounded-md px-2 py-1.5 text-sm text-popover-foreground outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                       render={<Link href={seg.url} />}
                     >
@@ -29,7 +29,10 @@ export function EllipsisDropdown({ hidden }: { hidden: CrumbSegment[] }) {
                   )
                 }
                 return (
-                  <div key={i} className="px-2 py-1.5 text-sm text-muted-foreground">
+                  <div
+                    key={'name' in seg ? seg.name : `item-${i}`}
+                    className="px-2 py-1.5 text-sm text-muted-foreground"
+                  >
                     {'name' in seg ? seg.name : ''}
                   </div>
                 )

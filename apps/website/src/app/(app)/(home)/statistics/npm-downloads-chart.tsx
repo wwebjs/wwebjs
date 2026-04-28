@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -57,32 +57,23 @@ function mergeData(raw: Record<string, RawEntry[]>): MergedEntry[] {
   return Array.from(map.values()).sort((a, b) => a.date.localeCompare(b.date))
 }
 
-function parseLocal(dateStr: string): Date {
+function parseDateString(dateStr: string): Date {
   const [y, m, d] = dateStr.split('-').map(Number)
   return new Date(y, m - 1, d)
 }
 
 function filterData(data: MergedEntry[], months: number): MergedEntry[] {
   if (data.length === 0) return []
-  const referenceDate = parseLocal(data[data.length - 1].date)
+  const referenceDate = parseDateString(data[data.length - 1].date)
   const startDate = new Date(referenceDate)
   startDate.setMonth(startDate.getMonth() - (months - 1))
-  return data.filter(item => parseLocal(item.date) >= startDate)
+  return data.filter(item => parseDateString(item.date) >= startDate)
 }
 
-export function NpmDownloadsChart() {
+export function NpmDownloadsChart({ data: rawData }: { data: Record<string, RawEntry[]> }) {
   const [timeRange, setTimeRange] = useState<TimeRange>('1 Year')
-  const [data, setData] = useState<MergedEntry[]>([])
 
-  useEffect(() => {
-    async function load() {
-      const res = await fetch('/data/npm-downloads.json')
-      const json = (await res.json()) as Record<string, RawEntry[]>
-      setData(mergeData(json))
-    }
-    load()
-  }, [])
-
+  const data = useMemo(() => mergeData(rawData), [rawData])
   const months = TIME_RANGE_OPTIONS.find(o => o.value === timeRange)!.months
   const { filtered, ticks } = useMemo(() => {
     const filtered = filterData(data, months)

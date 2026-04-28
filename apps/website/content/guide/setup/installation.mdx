@@ -1,0 +1,168 @@
+---
+title: Installation
+---
+
+<Callout title="Tip" variant="tip">
+  Checkout [Quick Start](/guide/quick-start) for a more faster setup with the CLI tool.
+</Callout>
+
+## Setup steps
+
+<Steps>
+  <Step>
+    **Verify Node and package manager**
+
+    ```bash
+    node --version
+    npm --version
+    ```
+
+    If `node` is missing or outdated, install a current LTS release first.
+
+  </Step>
+
+  <Step>
+    **Initialize project**
+
+    ```bash
+    mkdir my-whatsapp-app
+    cd my-whatsapp-app
+    npm init -y
+    ```
+
+  </Step>
+
+  <Step>
+    **Install dependencies**
+
+    Install the core library:
+
+    ```bash
+    npm install whatsapp-web.js
+    ```
+
+    Install a terminal QR renderer for local development:
+
+    ```bash
+    npm install qrcode-terminal
+    ```
+
+    `puppeteer` is managed by the dependency graph. Only override browser paths in special host environments.
+
+  </Step>
+
+  <Step>
+    **Create baseline script**
+
+    Create `index.js` with this setup:
+
+    ```javascript
+    const { Client, LocalAuth } = require('whatsapp-web.js')
+    const qrcode = require('qrcode-terminal')
+
+    const client = new Client({
+      authStrategy: new LocalAuth(),
+    })
+
+    client.on('qr', qr => {
+      qrcode.generate(qr, { small: true })
+    })
+
+    client.on('authenticated', () => {
+      console.log('Authenticated')
+    })
+
+    client.on('ready', () => {
+      console.log('Ready')
+    })
+
+    client.on('message_received', async msg => {
+      if (msg.body === '!ping') {
+        await msg.reply('pong')
+      }
+    })
+
+    client.on('disconnected', reason => {
+      console.log('Disconnected:', reason)
+    })
+
+    client.initialize()
+    ```
+
+  </Step>
+
+  <Step>
+    **Add scripts in package.json**
+
+    ```json
+    {
+      "scripts": {
+        "start": "node index.js",
+        "dev": "node index.js"
+      }
+    }
+    ```
+
+  </Step>
+
+  <Step>
+    **First run**
+
+    ```bash
+    npm start
+    ```
+
+    On first run, scan the QR code with WhatsApp Linked Devices.
+
+  </Step>
+
+  <Step>
+    **Validation**
+
+    Confirm these checkpoints:
+
+    1. `authenticated` appears after scanning.
+    2. `ready` appears next.
+    3. Sending `!ping` returns `pong`.
+    4. Restart does not require scanning again.
+
+  </Step>
+</Steps>
+
+## Common installation issues
+
+<Callout title="Warning" variant="warning">
+  If Chromium cannot start, stop and fix your runtime dependencies before adding more app logic.
+</Callout>
+
+### Node version mismatch
+
+Symptoms:
+
+1. Install errors in dependencies.
+2. Runtime errors on startup.
+
+Fix:
+
+1. Install current LTS.
+2. Remove `node_modules` and `package-lock.json`.
+3. Run `npm install` again.
+
+### Browser startup fails on servers
+
+If your host has restricted sandbox settings or no GUI, use Puppeteer args explicitly.
+
+```javascript
+const client = new Client({
+  authStrategy: new LocalAuth(),
+  puppeteer: {
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  },
+})
+```
+
+### QR code is not displayed
+
+1. Verify that the process is still running.
+2. Verify terminal rendering capability.
+3. Add explicit logs inside the `qr` handler.

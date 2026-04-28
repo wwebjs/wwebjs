@@ -1,8 +1,8 @@
-import { Pencil } from 'lucide-react'
+import { IconPencilFilled } from '@tabler/icons-react'
+import { Badge } from '@/components/ui/badge'
 import { CopyPage } from './page-actions'
 import { PageBreadcrumb } from './breadcrumb'
 import { PageTitle } from './title'
-import { PageNotice } from './notice'
 import { PrevIconButton, NextIconButton } from '../next-page'
 import type { CrumbSegment } from '@/lib/page-tree'
 
@@ -11,7 +11,6 @@ export type Neighbour = { url: string; name: React.ReactNode } | undefined
 type PageHeaderProps = {
   title: string
   description?: string
-  notice?: string
   lastModified?: Date
   badges?: string[]
   breadcrumbs: CrumbSegment[]
@@ -38,7 +37,7 @@ function PageLastEdited({ lastModified, githubUrl }: { lastModified?: Date; gith
           className="text-muted-foreground transition-colors hover:text-foreground"
           aria-label="Edit on GitHub"
         >
-          <Pencil className="size-3.5" />
+          <IconPencilFilled className="size-3.5" />
         </a>
       )}
     </div>
@@ -74,7 +73,6 @@ function PageActions({
 export function PageHeader({
   title,
   description,
-  notice,
   lastModified,
   badges,
   breadcrumbs,
@@ -92,7 +90,7 @@ export function PageHeader({
       </div>
       <div className="flex flex-col gap-3">
         <div className="flex items-start justify-between">
-          <PageTitle title={title} badges={badges} notice={notice} />
+          <PageTitle title={title} />
           <PageActions
             page={page}
             url={url}
@@ -102,8 +100,14 @@ export function PageHeader({
           />
         </div>
         {description && <p className="text-base text-muted-foreground">{description}</p>}
+        {badges && badges.length > 0 && (
+          <div className="flex gap-1.5">
+            {badges.map(badge => (
+              <Badge key={badge}>@{badge.charAt(0).toUpperCase() + badge.slice(1)}</Badge>
+            ))}
+          </div>
+        )}
       </div>
-      {notice && <PageNotice notice={notice} badges={badges} />}
     </div>
   )
 }

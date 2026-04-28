@@ -1,0 +1,820 @@
+---
+title: Messages
+description: Learn the message model and handle receiving, sending, media, reactions, and editing in one reliable flow.
+---
+
+In whatsapp-web.js, `Message` is the main runtime object.
+
+<CodeBlock
+  language="javascript"
+  filename="index.js"
+  code={`const { Client } = require('whatsapp-web.js')
+const client = new Client()
+
+client.on('message_received', async msg => {
+  if (msg.body === '!ping') {
+    await msg.reply('pong')
+  }
+})`}
+/>
+
+<Callout title="Tip" variant="tip">
+  Keep one message flow for all handlers: filter first, normalize input, then route.
+</Callout>
+
+## Core model
+
+Most message bugs come from:
+
+1. mixing incoming and self-created events,
+2. skipping input normalization,
+3. weak branching for media and special types,
+4. duplicate replies on repeated triggers.
+
+<Callout title="Warning" variant="warning">
+  Do not process `message_received` and `message_create` with the same logic path unless you really
+  need both.
+</Callout>
+
+## Message object overview
+
+When the `message_received` event fires, you receive a `Message` instance:
+
+```javascript
+client.on('message_received', msg => {
+  console.log(msg.body) // Text content
+  console.log(msg.from) // Sender's WhatsApp ID (e.g. '15551234567@c.us')
+  console.log(msg.to) // Recipient ID
+  console.log(msg.id) // Unique message ID
+  console.log(msg.timestamp) // Unix timestamp
+  console.log(msg.type) // 'chat', 'image', 'video', 'audio', 'document', etc.
+  console.log(msg.isGroup) // true if sent in a group
+  console.log(msg.hasMedia) // true if the message contains media
+  console.log(msg.author) // In groups: the sender's ID (msg.from is the group ID)
+})
+```
+
+## Practical processing flow
+
+A reliable handler should follow the same sequence every time:
+
+1. Validate source context, `fromMe`, chat type, sender rules.
+2. Normalize payload text.
+3. Branch by message type.
+4. Call domain logic.
+5. Log failures with context.
+
+```javascript
+client.on('message_received', async msg => {
+  if (msg.fromMe) return
+  if (!msg.body && !msg.hasMedia) return
+
+  const input = (msg.body || '').trim().toLowerCase()
+
+  try {
+    if (input === '!ping') {
+      await msg.reply('pong')
+      return
+    }
+
+    if (msg.hasMedia) {
+      await msg.reply('Media received')
+    }
+  } catch (error) {
+    console.error('Message flow error:', {
+      id: msg.id?._serialized,
+      from: msg.from,
+      type: msg.type,
+      error,
+    })
+  }
+})
+```
+
+## Incoming and outgoing events
+
+Use this rule consistently:
+
+1. `message_received` for incoming messages.
+2. `message_create` for locally created messages.
+
+Mixing these two streams is a common source of echo loops.
+
+<Callout title="Tip" variant="tip">
+  Start with `message_received` only. Add `message_create` later for analytics or outgoing tracking.
+</Callout>
+
+## Receive messages
+
+### The `message_received` Event
+
+The `message_received` event fires whenever someone sends a message to the app's account, in
+private chats or groups.
+
+```javascript
+client.on('message_received', async msg => {
+  console.log(`[${msg.from}] ${msg.body}`)
+})
+```
+
+### The `message_create` Event
+
+`message_create` fires for every message created, including ones the app sends itself. Use this
+when you want to track outgoing messages.
+
+<Callout title="Warning" type="warning">
+  If you do not check `msg.fromMe`, you can process your own messages by mistake.
+</Callout>
+
+```javascript
+client.on('message_create', async msg => {
+  if (msg.fromMe) {
+    console.log('app sent:', msg.body)
+  }
+})
+```
+
+### Filtering by content
+
+Respond only to specific text:
+
+```javascript
+client.on('message_received', async msg => {
+  if (msg.body === '!ping') {
+    await msg.reply('pong')
+  }
+})
+```
+
+Use `startsWith` for command prefixes:
+
+```javascript
+client.on('message_received', async msg => {
+  if (!msg.body.startsWith('!')) return
+
+  const [command, ...args] = msg.body.slice(1).split(' ')
+
+  switch (command.toLowerCase()) {
+    case 'hello':
+      await msg.reply('Hello there!')
+      break
+    case 'help':
+      await msg.reply('Available commands: !hello, !help')
+      break
+  }
+})
+```
+
+### Filtering by chat type
+
+Check `msg.isGroup` to handle private and group messages differently:
+
+```javascript
+client.on('message_received', async msg => {
+  if (msg.isGroup) {
+    const group = await msg.getChat()
+    console.log(`Group message in: ${group.name}`)
+  } else {
+    console.log('Private message')
+  }
+})
+```
+
+### Ignoring the app's own messages
+
+`msg.fromMe` is `true` when the app sent the message. Skip it to avoid processing your own output:
+
+```javascript
+client.on('message_received', async msg => {
+  if (msg.fromMe) return
+  // Handle only messages from others
+})
+```
+
+### Filtering by media type
+
+Use `msg.hasMedia` and `msg.type` to react to specific media:
+
+```javascript
+client.on('message_received', async msg => {
+  if (!msg.hasMedia) return
+
+  if (msg.type === 'image') {
+    console.log('Received an image')
+  } else if (msg.type === 'document') {
+    console.log('Received a document:', msg.body) // body = filename for documents
+  } else if (msg.type === 'audio') {
+    console.log('Received audio')
+  }
+})
+```
+
+### Detecting mentions
+
+Check whether the app itself was mentioned in a group:
+
+```javascript
+const botNumber = '15551234567@c.us'
+
+client.on('message_received', async msg => {
+  if (msg.mentionedIds.includes(botNumber)) {
+    await msg.reply('You mentioned me!')
+  }
+})
+```
+
+### Getting mentions from a message
+
+Retrieve the full `Contact` objects for everyone mentioned:
+
+```javascript
+client.on('message_received', async msg => {
+  const mentions = await msg.getMentions()
+  for (const contact of mentions) {
+    console.log('Mentioned:', contact.name || contact.number)
+  }
+})
+```
+
+### Checking sender info
+
+Get the contact who sent the message for name lookups or business checks:
+
+```javascript
+client.on('message_received', async msg => {
+  const contact = await msg.getContact()
+
+  console.log('From:', contact.name || contact.pushname || contact.number)
+  console.log('Business:', contact.isBusiness)
+  console.log('Blocked:', contact.isBlocked)
+})
+```
+
+## Sending messages
+
+<Callout title="Tip" variant="tip">
+  Save the returned `Message` from `sendMessage` when you need follow-up actions like edit, delete,
+  or status tracking.
+</Callout>
+
+### Send a text message
+
+To send a message to any chat, use `client.sendMessage()` with a chat ID and the text:
+
+```javascript
+// Private chat, phone number + @c.us
+await client.sendMessage('15551234567@c.us', 'Hello!')
+
+// Group chat, group ID + @g.us
+await client.sendMessage('120363021234567890@g.us', 'Hello everyone!')
+```
+
+`sendMessage` returns the sent `Message` object.
+
+### Reply to a message
+
+`msg.reply()` sends a message that is visually quoted under the original:
+
+```javascript
+client.on('message_received', async msg => {
+  if (msg.body === '!ping') {
+    await msg.reply('pong')
+  }
+})
+```
+
+You can also reply to a specific message from a different chat by passing the target chat ID:
+
+```javascript
+await msg.reply('Got it!', '15559876543@c.us')
+```
+
+### Quote a message
+
+To quote a specific message when sending to a chat:
+
+```javascript
+client.on('message_received', async msg => {
+  const chat = await msg.getChat()
+  await chat.sendMessage('Here is my reply', {
+    quotedMessageId: msg.id._serialized,
+  })
+})
+```
+
+### Mention contacts
+
+To mention someone in a message, include their ID formatted as `@number` in the text and pass the
+`mentions` option:
+
+```javascript
+client.on('message_received', async msg => {
+  if (msg.isGroup) {
+    const contact = await msg.getContact()
+    const mention = `@${contact.number}`
+
+    await msg.reply(`Thanks ${mention}!`, null, {
+      mentions: [contact],
+    })
+  }
+})
+```
+
+### Mention everyone in a group (tag all)
+
+<Callout title="Warning" variant="warning">
+  Tag-all can look spammy. Use it only for clear operational messages.
+</Callout>
+
+```javascript
+client.on('message_received', async msg => {
+  if (msg.body === '!all' && msg.isGroup) {
+    const chat = await msg.getChat()
+    const mentions = []
+    let text = ''
+
+    for (const participant of chat.participants) {
+      const contact = await client.getContactById(participant.id._serialized)
+      mentions.push(contact)
+      text += `@${contact.number} `
+    }
+
+    await chat.sendMessage(text.trim(), { mentions })
+  }
+})
+```
+
+### Send a message with a link
+
+Just include the URL in the text. WhatsApp usually generates the preview automatically:
+
+```javascript
+await client.sendMessage('15551234567@c.us', 'Check this out: https://example.com')
+```
+
+### Mark chat as seen
+
+To mark a chat as read after sending or receiving a message:
+
+```javascript
+client.on('message_received', async msg => {
+  const chat = await msg.getChat()
+  await chat.sendSeen()
+})
+```
+
+### Simulate typing
+
+Show the "typing..." indicator before sending a response:
+
+```javascript
+client.on('message_received', async msg => {
+  const chat = await msg.getChat()
+  await chat.sendStateTyping()
+
+  // Simulate processing time
+  await new Promise(r => setTimeout(r, 2000))
+
+  await chat.clearState()
+  await msg.reply('Done thinking!')
+})
+```
+
+### Check message acknowledgment
+
+`message_ack` fires when the delivery or read status of a sent message changes:
+
+```javascript
+client.on('message_ack', (msg, ack) => {
+  // ack values: 0 = pending, 1 = sent, 2 = delivered, 3 = read, 4 = played
+  if (ack === 3) {
+    console.log(`Message read: ${msg.body}`)
+  }
+})
+```
+
+<Callout title="Tip" variant="tip">
+  Log `ack` transitions in production. They help debug delivery issues quickly.
+</Callout>
+
+## Media handling
+
+<Callout title="Tip" variant="tip">
+  Keep media handling in a separate module so message routing stays clean.
+</Callout>
+
+### The MessageMedia class
+
+All attachments in whatsapp-web.js are `MessageMedia` objects. They include MIME type, Base64
+data, filename, and size.
+
+```javascript
+const { MessageMedia } = require('whatsapp-web.js')
+```
+
+### Send a file from disk
+
+Use `MessageMedia.fromFilePath()` to load any local file:
+
+```javascript
+const { MessageMedia } = require('whatsapp-web.js')
+
+client.on('message_received', async msg => {
+  if (msg.body === '!photo') {
+    const media = MessageMedia.fromFilePath('./photo.jpg')
+    await msg.reply(media)
+  }
+})
+```
+
+Add a caption by passing it as the second argument to `reply()`:
+
+```javascript
+const media = MessageMedia.fromFilePath('./photo.jpg')
+await msg.reply(media, '📸 Here is your photo!')
+```
+
+### Supported file types
+
+| Type     | Common Extensions                |
+| -------- | -------------------------------- |
+| Image    | `.jpg`, `.png`, `.gif`, `.webp`  |
+| Video    | `.mp4`                           |
+| Audio    | `.mp3`, `.ogg`                   |
+| Document | `.pdf`, `.docx`, `.xlsx`, `.zip` |
+| Sticker  | `.webp`                          |
+
+### Send a file from a URL
+
+Download the file yourself and wrap it in `MessageMedia`:
+
+```javascript
+const axios = require('axios')
+const { MessageMedia } = require('whatsapp-web.js')
+
+client.on('message_received', async msg => {
+  if (msg.body === '!meme') {
+    const response = await axios.get('https://example.com/meme.jpg', {
+      responseType: 'arraybuffer',
+    })
+
+    const media = new MessageMedia(
+      'image/jpeg',
+      Buffer.from(response.data).toString('base64'),
+      'meme.jpg'
+    )
+
+    await msg.reply(media, 'Here you go!')
+  }
+})
+```
+
+### Send a document
+
+Any file that is not an image, video, or audio is sent as a document:
+
+```javascript
+client.on('message_received', async msg => {
+  if (msg.body === '!report') {
+    const media = MessageMedia.fromFilePath('./report.pdf')
+    await msg.reply(media, '📄 Monthly report')
+  }
+})
+```
+
+### Send audio
+
+```javascript
+client.on('message_received', async msg => {
+  if (msg.body === '!audio') {
+    const media = MessageMedia.fromFilePath('./track.mp3')
+    await msg.reply(media)
+  }
+})
+```
+
+### Send a sticker
+
+Stickers must be `.webp` files. Send them the same way as images. WhatsApp renders them as
+stickers automatically:
+
+```javascript
+const media = MessageMedia.fromFilePath('./sticker.webp')
+await msg.reply(media)
+```
+
+### Video support notes
+
+<Callout title="Warning" variant="warning">
+  Video sending needs Chromium with proper codec support. If it fails, test with `headless: false`
+  or convert videos before sending.
+</Callout>
+
+### Download received media
+
+When `msg.hasMedia` is `true`, call `msg.downloadMedia()`:
+
+```javascript
+const fs = require('fs')
+const path = require('path')
+
+client.on('message_received', async msg => {
+  if (!msg.hasMedia) return
+
+  const media = await msg.downloadMedia()
+
+  if (media) {
+    const fileName = media.filename || `media-${Date.now()}`
+    const filePath = path.join('./downloads', fileName)
+    fs.writeFileSync(filePath, media.data, 'base64')
+    console.log('Saved:', filePath)
+  }
+})
+```
+
+### Organize downloads by type
+
+```javascript
+const fs = require('fs')
+const path = require('path')
+
+const TYPE_FOLDERS = {
+  image: 'images',
+  video: 'videos',
+  audio: 'audio',
+  document: 'documents',
+  sticker: 'stickers',
+}
+
+client.on('message_received', async msg => {
+  if (!msg.hasMedia) return
+
+  const media = await msg.downloadMedia()
+  if (!media) return
+
+  const folder = TYPE_FOLDERS[msg.type] || 'other'
+  const dir = path.join('./downloads', folder)
+  fs.mkdirSync(dir, { recursive: true })
+
+  const fileName = media.filename || `${msg.type}-${Date.now()}`
+  fs.writeFileSync(path.join(dir, fileName), media.data, 'base64')
+})
+```
+
+### Send media to a specific chat
+
+Use `chat.sendMessage()` instead of `msg.reply()` when you send to a chat found by ID:
+
+```javascript
+const chat = await client.getChatById('15551234567@c.us')
+const media = MessageMedia.fromFilePath('./invoice.pdf')
+await chat.sendMessage(media, '📄 Your invoice')
+```
+
+<Callout title="Tip" variant="tip">
+  Validate file size before send and before save to avoid memory spikes.
+</Callout>
+
+## Reactions
+
+<Callout title="Tip" variant="tip">
+  Reactions are low-noise feedback. They work well for quick command confirmations.
+</Callout>
+
+### React to a message
+
+Call `message.react()` with any emoji string to add a reaction:
+
+```javascript
+client.on('message_received', async msg => {
+  if (msg.body === '!like') {
+    await msg.react('👍')
+  }
+})
+```
+
+### Remove a reaction
+
+Pass an empty string to remove the app's own reaction:
+
+```javascript
+await msg.react('')
+```
+
+### Auto-react to incoming messages
+
+React to every message the app receives:
+
+<Callout title="Warning" variant="warning">
+  Avoid auto-reacting in high-traffic groups unless users asked for it.
+</Callout>
+
+```javascript
+client.on('message_received', async msg => {
+  if (msg.fromMe) return
+  await msg.react('✅')
+})
+```
+
+### React based on content
+
+```javascript
+client.on('message_received', async msg => {
+  if (msg.fromMe) return
+
+  if (msg.body.toLowerCase().includes('thank')) {
+    await msg.react('❤️')
+  } else if (msg.body.startsWith('!')) {
+    await msg.react('⚡')
+  }
+})
+```
+
+### Listen for reactions from others
+
+The `message_reaction` event fires whenever any user reacts to a message:
+
+```javascript
+client.on('message_reaction', reaction => {
+  console.log('Emoji:', reaction.reaction)
+  console.log('Sender:', reaction.senderId)
+  console.log('Message ID:', reaction.msgId._serialized)
+})
+```
+
+### Get all reactions on a message
+
+Use `message.getReactions()` to fetch the current reaction state for a specific message:
+
+```javascript
+client.on('message_received', async msg => {
+  if (msg.body === '!reactions') {
+    // Get reactions on the quoted message
+    if (msg.hasQuotedMsg) {
+      const quoted = await msg.getQuotedMessage()
+      const reactionList = await quoted.getReactions()
+
+      for (const reaction of reactionList) {
+        console.log(`${reaction.id}: ${reaction.senders.length} reactions`)
+      }
+    }
+  }
+})
+```
+
+<Callout title="Tip" variant="tip">
+  Combine reaction counts with message IDs for lightweight engagement tracking.
+</Callout>
+
+## Editing and deleting messages
+
+<Callout title="Warning" variant="warning">
+  Edit and delete actions are time-sensitive and can fail on older messages.
+</Callout>
+
+### Edit a message
+
+Use `message.edit()` to update text in a message sent by your app. Only recent messages can be
+edited.
+
+```javascript
+client.on('message_received', async msg => {
+  if (msg.body === '!edit') {
+    // Send a message and then edit it
+    const sent = await msg.reply('Original text')
+    await new Promise(r => setTimeout(r, 2000))
+    await sent.edit('Updated text')
+  }
+})
+```
+
+`edit()` returns the updated `Message` object, or `null` if the edit fails.
+
+### Listen for edited messages
+
+The `message_edit` event fires whenever any message in a chat is edited:
+
+```javascript
+client.on('message_edit', (msg, newBody, prevBody) => {
+  console.log('Message edited')
+  console.log('Before:', prevBody)
+  console.log('After:', newBody)
+})
+```
+
+### Delete a message
+
+`message.delete()` removes a message. Pass `true` to delete for everyone, or `false` (default) to
+delete only for yourself:
+
+```javascript
+// Delete for everyone
+await msg.delete(true)
+
+// Delete only for yourself
+await msg.delete(false)
+```
+
+Only your app's own messages can be deleted for everyone. In groups, deleting someone else's
+message for everyone needs admin rights.
+
+### Auto-delete after a delay
+
+Send a temporary message that deletes itself after a few seconds:
+
+```javascript
+client.on('message_received', async msg => {
+  if (msg.body === '!temp') {
+    const sent = await msg.reply('This message will disappear in 5 seconds')
+    setTimeout(async () => {
+      await sent.delete(true)
+    }, 5000)
+  }
+})
+```
+
+### Listen for deleted messages
+
+`message_revoke_everyone` fires when any user deletes a message for everyone:
+
+```javascript
+client.on('message_revoke_everyone', (msg, revokedMsg) => {
+  if (revokedMsg) {
+    console.log('Deleted message was:', revokedMsg.body)
+  }
+})
+```
+
+`message_revoke_me` fires when the sender deletes a message only for themselves:
+
+```javascript
+client.on('message_revoke_me', msg => {
+  console.log('Message removed for sender:', msg.body)
+})
+```
+
+### Pin and unpin messages
+
+Pin important messages in a chat so they appear at the top:
+
+```javascript
+client.on('message_received', async msg => {
+  if (msg.body === '!pin') {
+    await msg.pin()
+    await msg.reply('📌 Message pinned')
+  }
+
+  if (msg.body === '!unpin') {
+    await msg.unpin()
+  }
+})
+```
+
+<Callout title="Tip" variant="tip">
+  Wrap delayed delete jobs in `try/catch` to prevent silent failures.
+</Callout>
+
+## Load chat and contact context
+
+For context aware behavior, fetch related entities explicitly:
+
+```javascript
+client.on('message_received', async msg => {
+  const chat = await msg.getChat()
+  console.log(chat.name)
+
+  const contact = await msg.getContact()
+  console.log(contact.name, contact.number)
+})
+```
+
+## Quoted message handling
+
+```javascript
+client.on('message_received', async msg => {
+  if (!msg.hasQuotedMsg) return
+
+  const quoted = await msg.getQuotedMessage()
+  console.log('Quoted text:', quoted.body)
+})
+```
+
+## ID formats
+
+Understanding ID patterns helps routing and persistence:
+
+1. private contact, `number@c.us`
+2. group, `id@g.us`
+3. status stream, `status@broadcast`
+
+## Acknowledgement and delivery state
+
+Track `message_ack` when delivery observability matters:
+
+```javascript
+client.on('message_ack', (msg, ack) => {
+  console.log('Ack update', msg.id._serialized, ack)
+})
+```
+
+This lets you track sent, delivered, and read states.

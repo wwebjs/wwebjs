@@ -2,13 +2,14 @@
   "title": "Guide",
   "pages": [
     "faq",
+    "features",
     "index",
-    "comparisons",
     "what-is-wwebjs",
     "setup",
     "your-application",
-    "components",
-    "business-features",
+    "other-interactions",
+    "interactive-components",
+    "business-account-features",
     "advanced-topics",
     "contributing",
     "advanced"

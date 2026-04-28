@@ -1,4 +1,4 @@
 {
   "title": "Setup",
-  "pages": ["getting-started"]
+  "pages": ["installation", "code-editor"]
 }

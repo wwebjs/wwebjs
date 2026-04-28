@@ -1,216 +1,261 @@
 ---
 title: FAQ
 description: Frequently Asked Questions about whatapp-web.js
-icon: Library
+icon: Help
 ---
 
-import { File, Folder, Files } from 'fumadocs-ui/components/files'
-import { Accordion, Accordions } from 'fumadocs-ui/components/accordion'
+<AccordionCard title="Installation & Setup" description="Common questions about getting whatsapp-web.js running in your environment.">
+  <AccordionItem value="multiple-accounts">
+    <AccordionTrigger>Can I use multiple accounts at once?</AccordionTrigger>
+    <AccordionContent>
+      Yes, run multiple app instances with different auth strategies (RemoteAuth with database works
+      best for this).
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="headless-vs-gui">
+    <AccordionTrigger>What's the difference between headless and GUI mode?</AccordionTrigger>
+    <AccordionContent>
+      - **Headless:** No visible browser, lower resource usage, limited video support
+      - **GUI:** Shows browser window, useful for debugging, better media support
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="vps-display">
+    <AccordionTrigger>Can I run this on a VPS without display?</AccordionTrigger>
+    <AccordionContent>
+      Yes, use headless mode. For video support, use `xvfb-run` on Linux to provide a virtual display.
+    </AccordionContent>
+  </AccordionItem>
+</AccordionCard>
 
-## Installation & Setup
+<AccordionCard title="Authentication" description="How sessions, QR codes, and the different auth strategies work.">
+  <AccordionItem value="qr-code">
+    <AccordionTrigger>Do I need to scan QR code every time?</AccordionTrigger>
+    <AccordionContent>
+      No, use LocalAuth (local file storage) or RemoteAuth (database) for session persistence.
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="auth-strategies">
+    <AccordionTrigger>What's the difference between NoAuth, LocalAuth, and RemoteAuth?</AccordionTrigger>
+    <AccordionContent>
+      - **NoAuth:** Session lost on restart (testing only)
+      - **LocalAuth:** Session saved to local `.wwebjs_auth` folder (single instance)
+      - **RemoteAuth:** Session in cloud database (multiple instances)
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="session-expiring">
+    <AccordionTrigger>My session keeps expiring</AccordionTrigger>
+    <AccordionContent>
+      Ensure you're using an appropriate auth strategy with proper backup. Use RemoteAuth for
+      stability.
+    </AccordionContent>
+  </AccordionItem>
+</AccordionCard>
 
-<Accordions type="single">
-  <Accordion title="Can I use multiple accounts at once?">
-    Yes, run multiple app instances with different auth strategies (RemoteAuth with database works
-    best for this).
-  </Accordion>
-  <Accordion title="What's the difference between headless and GUI mode?">
-    - **Headless:** No visible browser, lower resource usage, limited video support - **GUI:** Shows
-    browser window, useful for debugging, better media support
-  </Accordion>
-  <Accordion title="Can I run this on a VPS without display?">
-    Yes, use headless mode. For video support, use `xvfb-run` on Linux to provide a virtual display.
-  </Accordion>
-</Accordions>
+<AccordionCard title="Messages & Operations" description="Sending, receiving, formatting, and managing messages and media.">
+  <AccordionItem value="filter-messages">
+    <AccordionTrigger>How do I filter messages by sender?</AccordionTrigger>
+    <AccordionContent>
+      Use `msg.from` property:
 
-## Authentication
+      ```javascript
+      if (msg.from === '1234567890@c.us') {
+        // Handle message
+      }
+      ```
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="formatted-text">
+    <AccordionTrigger>Can I send formatted text (bold, italic)?</AccordionTrigger>
+    <AccordionContent>
+      Yes:
 
-<Accordions type="single">
-  <Accordion title="Do I need to scan QR code every time?">
-    No, use LocalAuth (local file storage) or RemoteAuth (database) for session persistence.
-  </Accordion>
-  <Accordion title="What's the difference between NoAuth, LocalAuth, and RemoteAuth?">
-    - **NoAuth:** Session lost on restart (testing only) - **LocalAuth:** Session saved to local
-    `.wwebjs_auth` folder (single instance) - **RemoteAuth:** Session in cloud database (multiple
-    instances)
-  </Accordion>
-  <Accordion title="My session keeps expiring">
-    Ensure you're using an appropriate auth strategy with proper backup. Use RemoteAuth for
-    stability.
-  </Accordion>
-</Accordions>
+      ```javascript
+      await msg.reply('*bold* _italic_ ~strikethrough~')
+      ```
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="media-caption">
+    <AccordionTrigger>How do I add a caption to media?</AccordionTrigger>
+    <AccordionContent>
+      Pass caption as second argument:
 
-## Messages & Operations
+      ```javascript
+      const media = MessageMedia.fromFilePath('./image.jpg')
+      await msg.reply(media, 'This is my caption')
+      ```
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="download-media">
+    <AccordionTrigger>How do I download media from messages?</AccordionTrigger>
+    <AccordionContent>
+      Use `downloadMedia()`:
 
-<Accordions type="single">
-  <Accordion title="How do I filter messages by sender?">
-    Use `msg.from` property:
+      ```javascript
+      if (msg.hasMedia) {
+        const media = await msg.downloadMedia()
+        fs.writeFileSync('file.jpg', media.data, 'base64')
+      }
+      ```
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="edit-delete-messages">
+    <AccordionTrigger>Can I edit or delete messages?</AccordionTrigger>
+    <AccordionContent>
+      Yes, but only recent messages (less than 2 days):
 
-    ```javascript
-    if (msg.from === '1234567890@c.us') {
-      // Handle message
-    }
-    ```
+      ```javascript
+      await msg.edit('Edited text')
+      await msg.delete(true) // Delete for everyone
+      ```
+    </AccordionContent>
+  </AccordionItem>
+</AccordionCard>
 
-  </Accordion>
-  <Accordion title="Can I send formatted text (bold, italic)?">
-    Yes:
+<AccordionCard title="Groups" description="Creating groups, managing participants, and admin permissions.">
+  <AccordionItem value="create-group">
+    <AccordionTrigger>How do I create a group?</AccordionTrigger>
+    <AccordionContent>
+      Use `client.createGroup()`:
 
-    ```javascript
-    await msg.reply('*bold* _italic_ ~strikethrough~')
-    ```
+      ```javascript
+      const group = await client.createGroup('Group Name', ['1234567890@c.us'])
+      ```
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="remove-participant">
+    <AccordionTrigger>Can I remove someone from a group?</AccordionTrigger>
+    <AccordionContent>
+      Yes, if you're admin:
 
-  </Accordion>
-  <Accordion title="How do I add a caption to media?">
-    Pass caption as second argument:
+      ```javascript
+      await group.removeParticipants(['1234567890@c.us'])
+      ```
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="check-admin">
+    <AccordionTrigger>How do I check if I'm an admin?</AccordionTrigger>
+    <AccordionContent>
+      Check participant roles:
 
-    ```javascript
-    const media = MessageMedia.fromFilePath('./image.jpg')
-    await msg.reply(media, 'This is my caption')
-    ```
+      ```javascript
+      const isAdmin = group.participants.find(p => p.id === myId)?.isAdmin
+      ```
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="restrict-messages">
+    <AccordionTrigger>Can I restrict messages to admins only?</AccordionTrigger>
+    <AccordionContent>
+      Yes:
 
-  </Accordion>
-  <Accordion title="How do I download media from messages?">
-    Use `downloadMedia()`:
+      ```javascript
+      await group.setMessagesAdminsOnly(true)
+      ```
+    </AccordionContent>
+  </AccordionItem>
+</AccordionCard>
 
-    ```javascript
-    if (msg.hasMedia) {
-      const media = await msg.downloadMedia()
-      fs.writeFileSync('file.jpg', media.data, 'base64')
-    }
-    ```
+<AccordionCard title="Performance & Scaling" description="Running multiple instances and handling high message volumes efficiently.">
+  <AccordionItem value="slow-app">
+    <AccordionTrigger>My app is slow with many messages</AccordionTrigger>
+    <AccordionContent>
+      Implement message queuing and database indexing for better performance.
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="server-instances">
+    <AccordionTrigger>How many apps can I run on one server?</AccordionTrigger>
+    <AccordionContent>
+      Depends on server resources. Each app needs ~200MB+ RAM for browser.
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="rate-limiting">
+    <AccordionTrigger>How do I handle rate limiting?</AccordionTrigger>
+    <AccordionContent>
+      Add delays between operations:
 
-  </Accordion>
-  <Accordion title="Can I edit or delete messages?">
-    Yes, but only recent messages (< 2 days):
+      ```javascript
+      await msg.reply('Message 1')
+      await new Promise(r => setTimeout(r, 1000))
+      await msg.reply('Message 2')
+      ```
+    </AccordionContent>
+  </AccordionItem>
+</AccordionCard>
 
-    ```javascript
-    await msg.edit('Edited text')
-    await msg.delete(true) // Delete for everyone
-    ```
+<AccordionCard title="Errors & Debugging" description="Diagnosing common errors and debugging your application.">
+  <AccordionItem value="module-not-found">
+    <AccordionTrigger>Cannot find module 'whatsapp-web.js'</AccordionTrigger>
+    <AccordionContent>
+      Run `npm install whatsapp-web.js`
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="connection-refused">
+    <AccordionTrigger>Connection refused errors</AccordionTrigger>
+    <AccordionContent>
+      WhatsApp disconnected you. This is normal. Implement reconnection logic.
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="debugging">
+    <AccordionTrigger>How do I debug my app?</AccordionTrigger>
+    <AccordionContent>
+      Set `headless: false` to see browser, add console.log statements, use VS Code debugger.
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="session-invalid">
+    <AccordionTrigger>Session invalid on restart</AccordionTrigger>
+    <AccordionContent>
+      Use proper auth strategy (LocalAuth or RemoteAuth) instead of NoAuth.
+    </AccordionContent>
+  </AccordionItem>
+</AccordionCard>
 
-  </Accordion>
-</Accordions>
+<AccordionCard title="Best Practices" description="Recommended patterns for structuring and maintaining your bot.">
+  <AccordionItem value="use-await">
+    <AccordionTrigger>Should I use await?</AccordionTrigger>
+    <AccordionContent>
+      Yes, always. whatsapp-web.js is heavily asynchronous:
 
-## Groups
+      ```javascript
+      const contact = await msg.getContact() // Correct
+      const contact = msg.getContact() // Wrong
+      ```
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="app-structure">
+    <AccordionTrigger>What's the recommended way to structure my app?</AccordionTrigger>
+    <AccordionContent>
+      Split into modules:
 
-<Accordions type="single">
-  <Accordion title="How do I create a group?">
-    Use `client.createGroup()`:
-
-    ```javascript
-    const group = await client.createGroup('Group Name', ['1234567890@c.us'])
-    ```
-
-  </Accordion>
-  <Accordion title="Can I remove someone from a group?">
-    Yes, if you're admin:
-
-    ```javascript
-    await group.removeParticipants(['1234567890@c.us'])
-    ```
-
-  </Accordion>
-  <Accordion title="How do I check if I'm an admin?">
-    Check participant roles:
-
-    ```javascript
-    const isAdmin = group.participants.find(p => p.id === myId)?.isAdmin
-    ```
-
-  </Accordion>
-  <Accordion title="Can I restrict messages to admins only?">
-    Yes:
-
-    ```javascript
-    await group.setMessagesAdminsOnly(true)
-    ```
-
-  </Accordion>
-</Accordions>
-
-## Performance & Scaling
-
-<Accordions type="single">
-  <Accordion title="My app is slow with many messages">
-    Implement message queuing and database indexing for better performance.
-  </Accordion>
-  <Accordion title="How many apps can I run on one server?">
-    Depends on server resources. Each app needs ~200MB+ RAM for browser.
-  </Accordion>
-  <Accordion title="How do I handle rate limiting?">
-    Add delays between operations:
-
-    ```javascript
-    await msg.reply('Message 1')
-    await new Promise(r => setTimeout(r, 1000))
-    await msg.reply('Message 2')
-    ```
-
-  </Accordion>
-</Accordions>
-
-## Errors & Debugging
-
-<Accordions type="single">
-  <Accordion title="Cannot find module 'whatsapp-web.js'">
-    Run `npm install whatsapp-web.js`
-  </Accordion>
-  <Accordion title="Connection refused errors">
-    WhatsApp disconnected you. This is normal. Implement reconnection logic.
-  </Accordion>
-  <Accordion title="How do I debug my app?">
-    Set `headless: false` to see browser, add console.log statements, use VS Code debugger.
-  </Accordion>
-  <Accordion title="Session invalid on restart">
-    Use proper auth strategy (LocalAuth or RemoteAuth) instead of NoAuth.
-  </Accordion>
-</Accordions>
-
-## Best Practices
-
-<Accordions type="single">
-  <Accordion title="Should I use await?">
-    Yes, always. whatsapp-web.js is heavily asynchronous:
-
-    ```javascript
-    const contact = await msg.getContact() // Correct
-    const contact = msg.getContact() // Wrong
-    ```
-
-  </Accordion>
-  <Accordion title="What's the recommended way to structure my app?">
-    Split into modules:
-
-    <Files>
-      <Folder name="app" defaultOpen>
-        <Folder name="handlers" defaultOpen>
-          <File name="message-handler.js" />
-          <File name="command-handler.js" />
-          <File name="event-handler.js" />
+      <Files>
+        <Folder name="app" defaultOpen>
+          <Folder name="handlers" defaultOpen>
+            <File name="message-handler.js" />
+            <File name="command-handler.js" />
+            <File name="event-handler.js" />
+          </Folder>
+          <Folder name="models">
+            <File name="user.js" />
+            <File name="conversation.js" />
+          </Folder>
+          <Folder name="utils">
+            <File name="logger.js" />
+            <File name="config.js" />
+          </Folder>
+          <File name="index.js" />
         </Folder>
-        <Folder name="models">
-          <File name="user.js" />
-          <File name="conversation.js" />
-        </Folder>
-        <Folder name="utils">
-          <File name="logger.js" />
-          <File name="config.js" />
-        </Folder>
-        <File name="index.js" />
-      </Folder>
-    </Files>
+      </Files>
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="git-sessions">
+    <AccordionTrigger>Should I store sessions in the repository?</AccordionTrigger>
+    <AccordionContent>
+      No, use `.gitignore`:
 
-  </Accordion>
-  <Accordion title="Should I store sessions in the repository?">
-    No, use `.gitignore`:
-
-    ```
-    # .gitignore
-    .wwebjs_auth/
-    .env
-    node_modules/
-    ```
-
-  </Accordion>
-</Accordions>
+      ```
+      # .gitignore
+      .wwebjs_auth/
+      .env
+      node_modules/
+      ```
+    </AccordionContent>
+  </AccordionItem>
+</AccordionCard>

@@ -12,7 +12,6 @@ type TocItem = { title?: React.ReactNode; url: string; depth: number }
 type GuidePageContentProps = {
   title: string
   description?: string
-  notice?: string
   lastModified?: Date
   badges?: string[]
   toc: TocItem[]
@@ -28,7 +27,6 @@ type GuidePageContentProps = {
 export function GuidePageContent({
   title,
   description,
-  notice,
   lastModified,
   badges,
   toc,
@@ -52,7 +50,6 @@ export function GuidePageContent({
           <PageHeader
             title={title}
             description={description}
-            notice={notice}
             lastModified={lastModified}
             badges={badges}
             breadcrumbs={breadcrumbs}

@@ -21,10 +21,14 @@ export function GuideSidebar({
 }: React.ComponentProps<typeof Sidebar> & { tree: Root }) {
   const pathname = usePathname()
   const [pendingPath, setPendingPath] = React.useState<string | null>(null)
+  const [prevPathname, setPrevPathname] = React.useState(pathname)
 
-  React.useEffect(() => {
+  // Render-phase state update: clears pending optimistic path once the real navigation commits.
+  // useEffect would run a frame late, causing a flicker back to the old active item.
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname)
     setPendingPath(null)
-  }, [pathname])
+  }
 
   const activePath = pendingPath ?? pathname
 

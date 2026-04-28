@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
-import { ExternalLink } from 'lucide-react'
+import { IconExternalLink } from '@tabler/icons-react'
 
 const TOKEN_RE = /(\*\*[^*]+\*\*|\*[^*]+\*|_[^_]+_|\[[^\]]+\]\([^)]+\))/g
 
@@ -30,7 +30,7 @@ export function renderInline(text: string): ReactNode[] {
             rel="noopener noreferrer"
           >
             {label}
-            <ExternalLink className="size-3" />
+            <IconExternalLink className="size-3" />
           </a>
         )
       return (

@@ -1,6 +1,5 @@
 import { searchPath } from 'fumadocs-core/breadcrumb'
 import type { Root, Node } from 'fumadocs-core/page-tree'
-
 import type { source } from '@/lib/source'
 
 export type PageTreeNode = (typeof source.pageTree)['children'][number]
@@ -58,4 +57,16 @@ export function getPageCrumbs(
   }
 
   return raw
+}
+
+export function findFirstPageUnder(nodes: PageTreeNode[], prefix: string): string | null {
+  for (const node of nodes) {
+    if (node.type === 'page' && (node as PageTreePage).url.startsWith(prefix))
+      return (node as PageTreePage).url
+    if (node.type === 'folder') {
+      const found = findFirstPageUnder((node as PageTreeFolder).children as PageTreeNode[], prefix)
+      if (found) return found
+    }
+  }
+  return null
 }

@@ -20,7 +20,13 @@ function crumbText(seg: CrumbSegment): string {
   return 'name' in seg ? seg.name : '…'
 }
 
-function renderSegment(seg: CrumbSegment) {
+function crumbKey(seg: CrumbSegment): string {
+  if (seg.type === 'link') return seg.url
+  if (seg.type === 'ellipsis') return 'ellipsis'
+  return seg.name
+}
+
+function BreadcrumbSegment({ seg }: { seg: CrumbSegment }) {
   switch (seg.type) {
     case 'link':
       return (
@@ -87,7 +93,7 @@ export function PageBreadcrumb({ crumbs }: { crumbs: CrumbSegment[] }) {
         className="pointer-events-none invisible absolute flex whitespace-nowrap"
       >
         {crumbs.map((seg, i) => (
-          <React.Fragment key={i}>
+          <React.Fragment key={crumbKey(seg)}>
             {i > 0 && <span className="mx-1">/</span>}
             <span>{crumbText(seg)}</span>
           </React.Fragment>
@@ -97,9 +103,9 @@ export function PageBreadcrumb({ crumbs }: { crumbs: CrumbSegment[] }) {
       <Breadcrumb className="cursor-default">
         <BreadcrumbList>
           {displayCrumbs.map((seg, i) => (
-            <React.Fragment key={i}>
+            <React.Fragment key={crumbKey(seg)}>
               {i > 0 && <BreadcrumbSeparator />}
-              {renderSegment(seg)}
+              <BreadcrumbSegment seg={seg} />
             </React.Fragment>
           ))}
         </BreadcrumbList>

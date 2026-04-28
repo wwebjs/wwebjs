@@ -3,7 +3,7 @@
 import React, { useRef } from 'react'
 import { createPortal } from 'react-dom'
 import Draggable from 'react-draggable'
-import { Maximize2, Minimize2 } from 'lucide-react'
+import { IconMaximize, IconMinimize } from '@tabler/icons-react'
 import type { ReactNode } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -78,7 +78,7 @@ export function MacWindow({ className, children, title, groupKey }: MacWindowPro
               onClick={handlePopOut}
               className="cursor-pointer"
             >
-              <Maximize2 className="h-3 w-3" />
+              <IconMaximize className="size-3" />
             </Button>
           }
         />
@@ -86,7 +86,6 @@ export function MacWindow({ className, children, title, groupKey }: MacWindowPro
       </div>
 
       {isPopped &&
-        typeof document !== 'undefined' &&
         createPortal(
           <Draggable
             nodeRef={draggableRef as React.RefObject<HTMLElement>}
@@ -108,7 +107,7 @@ export function MacWindow({ className, children, title, groupKey }: MacWindowPro
                     onClick={handlePopIn}
                     className="cursor-pointer"
                   >
-                    <Minimize2 className="h-3 w-3" />
+                    <IconMinimize className="size-3" />
                   </Button>
                 }
               />

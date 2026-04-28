@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { Menu } from '@base-ui/react/menu'
-import { Check, Copy, ChevronDown } from 'lucide-react'
+import { IconCheckFilled, IconCopy, IconChevronDown } from '@tabler/icons-react'
 
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -78,9 +78,9 @@ export function CopyPage({
         onClick={handleCopy}
       >
         {copied ? (
-          <Check data-icon="inline-start" className="mx-1" />
+          <IconCheckFilled data-icon="inline-start" className="mx-1" />
         ) : (
-          <Copy data-icon="inline-start" className="mx-1" />
+          <IconCopy data-icon="inline-start" className="mx-1" />
         )}
         Copy Page
       </Button>
@@ -93,7 +93,7 @@ export function CopyPage({
             'peer -ml-0.5 flex size-8 items-center justify-center rounded-r-md bg-secondary text-secondary-foreground shadow-none transition-colors hover:bg-secondary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:size-7'
           )}
         >
-          <ChevronDown className="size-3.5" />
+          <IconChevronDown className="size-3.5" />
         </Menu.Trigger>
         <Menu.Portal>
           <Menu.Positioner align="end" sideOffset={6}>

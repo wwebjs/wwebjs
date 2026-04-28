@@ -4,9 +4,7 @@ description: A quick introduction to what whatsapp-web.js
 notice: Read the [Disclaimer](./disclaimer) before you start, whatsapp-web.js is unofficial and should be used responsibly to prevent getting blocked from WhatsApp.
 ---
 
-import { Step, Steps } from 'fumadocs-ui/components/steps'
-
-import { CpuIcon, PanelsTopLeftIcon, DatabaseIcon, TerminalIcon } from 'lucide-react'
+import { IconCpu, IconLayoutFilled, IconDatabaseFilled, IconTerminal } from '@tabler/icons-react'
 
 ## Introduction
 
@@ -16,25 +14,25 @@ WWebJS has different parts:
 
 <Cards>
 
-<Card icon={<CpuIcon className="text-purple-300" />} title='whatsapp-web.js' href='https://github.com/wwebjs/whatsapp-web.js'>
+<Card icon={<IconCpu className="text-purple-300" />} title='whatsapp-web.js' href='https://github.com/wwebjs/whatsapp-web.js'>
 
 Handles client, messages, chats, and communication with WhatsApp Web.
 
 </Card>
 
-<Card icon={<PanelsTopLeftIcon className="text-blue-300" />} title='WWebJS Core'  href='https://github.com/wwebjs/wwebjs/tree/main/packages/core'>
+<Card icon={<IconLayoutFilled className="text-blue-300" />} title='WWebJS Core'  href='https://github.com/wwebjs/wwebjs/tree/main/packages/core'>
 
 Utilities for sessions, authentication, and client lifecycle.
 
 </Card>
 
-<Card icon={<DatabaseIcon />} title='WWebJS Formatters' href='https://github.com/wwebjs/wwebjs/tree/main/packages/formatters'>
+<Card icon={<IconDatabaseFilled />} title='WWebJS Formatters' href='https://github.com/wwebjs/wwebjs/tree/main/packages/formatters'>
 
 Tools for formatting messages and media.
 
 </Card>
 
-<Card icon={<TerminalIcon />} title='WWebJS CLI' href='https://github.com/wwebjs/wwebjs/tree/main/packages/cli'>
+<Card icon={<IconTerminal />} title='WWebJS CLI' href='https://github.com/wwebjs/wwebjs/tree/main/packages/cli'>
 
 CLI tools for setting up your app.
 
@@ -57,9 +55,12 @@ CLI tools for setting up your app.
 
 A minimum version of Node.js 18 is required.
 
-```npm
-npm create wwebjs-app
-```
+<PackageManagerTabs
+  npm="npm create wwebjs-app"
+  yarn="yarn create wwebjs-app"
+  pnpm="pnpm create wwebjs-app"
+  bun="bun create wwebjs-app"
+/>
 
 It will ask you the built-in steps:
 

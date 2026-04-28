@@ -9,6 +9,7 @@ export const siteConfig = {
   links: {
     github: 'https://github.com/pedroslopez/whatsapp-web.js',
     discord: 'https://discord.wwebjs.dev',
+    marketplace: 'https://marketplace.wwebjs.dev',
   },
   navItems: [
     {
@@ -24,12 +25,8 @@ export const siteConfig = {
       label: 'Showcase',
     },
     {
-      href: '/blog',
-      label: 'Blog',
-    },
-    {
-      href: '/marketplace',
-      label: 'Marketplace',
+      href: '/changelog',
+      label: 'Changelog',
     },
   ],
 }

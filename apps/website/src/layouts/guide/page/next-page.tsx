@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
-import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react'
+import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react'
 
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -14,7 +14,7 @@ export function PrevIconButton({ url }: { url: string }) {
       nativeButton={false}
       render={<Link href={url} />}
     >
-      <ArrowLeftIcon />
+      <IconArrowLeft />
       <span className="sr-only">Previous</span>
     </Button>
   )
@@ -30,7 +30,7 @@ export function NextIconButton({ url }: { url: string }) {
       render={<Link href={url} />}
     >
       <span className="sr-only">Next</span>
-      <ArrowRightIcon />
+      <IconArrowRight />
     </Button>
   )
 }
@@ -38,7 +38,7 @@ export function NextIconButton({ url }: { url: string }) {
 export function PrevPageButton({ url, name }: { url: string; name: ReactNode }) {
   return (
     <Button variant="secondary" size="lg" nativeButton={false} render={<Link href={url} />}>
-      <ArrowLeftIcon /> {name}
+      <IconArrowLeft /> {name}
     </Button>
   )
 }
@@ -60,7 +60,7 @@ export function NextPageButton({
       nativeButton={false}
       render={<Link href={url} />}
     >
-      {name} <ArrowRightIcon />
+      {name} <IconArrowRight />
     </Button>
   )
 }

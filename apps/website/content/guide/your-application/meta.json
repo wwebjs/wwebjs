@@ -1,4 +1,10 @@
 {
   "title": "Your Application",
-  "pages": ["create-your-app", "authentication", "event-handler", "command-handler"]
+  "pages": [
+    "create-your-app",
+    "authentication",
+    "listen-to-events",
+    "message-replying",
+    "command-handling"
+  ]
 }

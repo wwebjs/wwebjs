@@ -2,9 +2,7 @@
 
 import { useEffect, useRef, type RefObject } from 'react'
 
-export function getLineOffset(depth: number): number {
-  return depth >= 3 ? 10 : 0
-}
+import { getLineOffset } from '@/lib/toc-helpers'
 
 export function TocThumb({
   containerRef,
@@ -47,6 +45,7 @@ export function TocThumb({
 
   useEffect(() => {
     update()
+    // `update` is stable within this closure scope - adding it would require useCallback and re-create on every render
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeIds])
 
@@ -56,6 +55,7 @@ export function TocThumb({
     const observer = new ResizeObserver(update)
     observer.observe(container)
     return () => observer.disconnect()
+    // `update` is stable within this closure scope - same reason as above
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [containerRef])
 

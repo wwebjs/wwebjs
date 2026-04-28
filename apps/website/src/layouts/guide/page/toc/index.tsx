@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef, useMemo, type ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 import { smoothScroll, useActiveItems } from './use-active-items'
-import { TocThumb, getLineOffset } from './toc-thumb'
+import { TocThumb } from './toc-thumb'
+import { getLineOffset } from '@/lib/toc-helpers'
 
 function getItemOffset(depth: number): number {
   if (depth <= 2) return 14
@@ -12,7 +13,6 @@ function getItemOffset(depth: number): number {
 }
 
 // TODO: Refactor the whole component, its too chunky
-// Fumadocs implentation:
 
 export function GuideTableOfContents({
   toc,

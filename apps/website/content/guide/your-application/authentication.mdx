@@ -1,0 +1,335 @@
+---
+title: Authentication
+description: Choose the right session strategy for local development, single host deployments, or distributed production.
+---
+
+import { File, Folder, Files } from 'fumadocs-ui/components/files'
+
+## Decision objective
+
+Use a strategy that matches your runtime constraints:
+
+1. low friction local development,
+2. stable single host production,
+3. distributed runtime with shared session persistence.
+
+## The three strategies
+
+### NoAuth
+
+No persistent session. Every restart requires a new login.
+
+Best for:
+
+1. quick experiments,
+2. temporary testing,
+3. disposable local runs.
+
+### LocalAuth
+
+Persists session data in local filesystem, by default under `.wwebjs_auth`.
+
+Best for:
+
+1. local development,
+2. single machine servers with persistent storage,
+3. simple production topology.
+
+### RemoteAuth
+
+Persists session data through a store adapter in remote storage.
+
+Best for:
+
+1. containers and ephemeral hosts,
+2. multi instance deployments,
+3. central session management.
+
+## Decision logic
+
+1. If filesystem is not durable, use `RemoteAuth`.
+2. If you run one persistent machine, use `LocalAuth`.
+3. If you only test quickly, use `NoAuth`.
+
+## Minimal examples
+
+### NoAuth
+
+```javascript
+const { Client, NoAuth } = require('whatsapp-web.js')
+
+const client = new Client({
+  authStrategy: new NoAuth(),
+})
+
+client.initialize()
+```
+
+### LocalAuth
+
+```javascript
+const { Client, LocalAuth } = require('whatsapp-web.js')
+
+const client = new Client({
+  authStrategy: new LocalAuth({
+    clientId: 'main',
+  }),
+})
+
+client.initialize()
+```
+
+### RemoteAuth
+
+```javascript
+const { Client, RemoteAuth } = require('whatsapp-web.js')
+const { MongoStore } = require('wwebjs-mongo')
+const mongoose = require('mongoose')
+
+async function main() {
+  await mongoose.connect(process.env.MONGODB_URI)
+
+  const client = new Client({
+    authStrategy: new RemoteAuth({
+      store: new MongoStore({ mongoose }),
+      clientId: 'main',
+      backupSyncIntervalMs: 300000,
+    }),
+  })
+
+  client.initialize()
+}
+
+main()
+```
+
+## Events you should always track
+
+1. `qr`
+2. `authenticated`
+3. `auth_failure`
+4. `ready`
+5. `disconnected`
+6. for remote auth, also `remote_session_saved`
+
+Without these signals, incident analysis becomes difficult.
+
+---
+
+## LocalAuth
+
+`LocalAuth` stores the WhatsApp session in a local folder (`.wwebjs_auth` by default). After the first login, subsequent restarts restore the session automatically, no QR code needed.
+
+### Setup
+
+`LocalAuth` is built into whatsapp-web.js. No extra packages required.
+
+```javascript
+const { Client, LocalAuth } = require('whatsapp-web.js')
+
+const client = new Client({
+  authStrategy: new LocalAuth(),
+})
+
+client.on('qr', qr => {
+  console.log('First run, scan this QR code')
+})
+
+client.on('ready', () => {
+  console.log('Ready!')
+})
+
+client.initialize()
+```
+
+### What Gets Created
+
+After the first successful login, a `.wwebjs_auth` directory appears next to your app file:
+
+<Files>
+  <Folder name="my-app" defaultOpen>
+    <Folder name=".wwebjs_auth" defaultOpen>
+      <Folder name="Default">
+        <File name="session" />
+      </Folder>
+    </Folder>
+    <File name="app.js" />
+    <File name="package.json" />
+  </Folder>
+</Files>
+
+Add `.wwebjs_auth` to your `.gitignore` to avoid accidentally committing session data.
+
+### Options
+
+```javascript
+const client = new Client({
+  authStrategy: new LocalAuth({
+    clientId: 'my-app', // Unique name - lets multiple apps share one machine
+    dataPath: './sessions', // Where to store session files (default: ./.wwebjs_auth)
+  }),
+})
+```
+
+#### `clientId`
+
+When you run more than one app on the same machine, give each a different `clientId` so their sessions don't overwrite each other:
+
+```javascript
+// app 1
+const client1 = new Client({
+  authStrategy: new LocalAuth({ clientId: 'support-app' }),
+})
+
+// app 2
+const client2 = new Client({
+  authStrategy: new LocalAuth({ clientId: 'sales-app' }),
+})
+```
+
+This creates separate folders: `.wwebjs_auth/support-app/` and `.wwebjs_auth/sales-app/`.
+
+### First Run vs Subsequent Runs
+
+**First run:**
+
+1. `qr` event fires - scan with your phone
+2. Session is saved to disk
+3. `authenticated` then `ready` fires
+
+**Subsequent runs:**
+
+1. Session is restored from disk
+2. `authenticated` then `ready` fires - no QR code
+
+```javascript
+client.on('qr', qr => {
+  // This only fires on first run (or if session expires)
+  console.log('Scan QR code')
+})
+
+client.on('ready', () => {
+  console.log('Ready!')
+})
+```
+
+### Limitations
+
+- **One instance per `clientId`**: Two processes with the same `clientId` will conflict.
+- **Tied to the filesystem**: Moving the app to a different server means copying the session folder.
+- **Not suitable for containers**: If the container is recreated, the session is lost. Use RemoteAuth instead.
+
+---
+
+## RemoteAuth
+
+`RemoteAuth` saves sessions to a remote store, a database or cloud storage service. This makes it suitable for Docker, Kubernetes, serverless, and any setup where the local filesystem cannot be trusted to persist data.
+
+### When to Use RemoteAuth
+
+- Your app runs in a container that can be recreated
+- You need more than one app instance sharing the same account
+- You deploy to a platform without persistent disk (e.g. Heroku, Railway, serverless)
+
+### Installation
+
+RemoteAuth itself is built in, but it needs three helper packages and a store adapter:
+
+```bash
+npm install fs-extra unzipper archiver
+```
+
+Then install the adapter for your storage backend:
+
+```bash
+# MongoDB
+npm install wwebjs-mongo mongoose
+
+# AWS S3
+npm install wwebjs-aws-s3 aws-sdk
+```
+
+### With MongoDB
+
+```javascript
+const { Client, RemoteAuth } = require('whatsapp-web.js')
+const { MongoStore } = require('wwebjs-mongo')
+const mongoose = require('mongoose')
+
+async function start() {
+  await mongoose.connect(process.env.MONGODB_URL)
+
+  const client = new Client({
+    authStrategy: new RemoteAuth({
+      store: new MongoStore({ mongoose }),
+      backupSyncIntervalMs: 600000, // Sync every 10 minutes
+    }),
+  })
+
+  client.on('qr', qr => {
+    console.log('Scan QR code')
+  })
+
+  client.on('ready', () => {
+    console.log('Ready!')
+  })
+
+  client.initialize()
+}
+
+start()
+```
+
+### Options
+
+```javascript
+new RemoteAuth({
+  store, // Required, the storage adapter instance
+  clientId: 'my-app', // Unique ID when running multiple instances
+  dataPath: './sessions', // Temporary local path during sync
+  backupSyncIntervalMs: 600000, // How often to sync (minimum 60000 ms)
+})
+```
+
+#### `backupSyncIntervalMs`
+
+Sessions are synced to the remote store on an interval while the app is running. The minimum allowed value is `60000` (1 minute). For most apps, 5–10 minutes (`300000`–`600000`) is a good balance.
+
+#### `clientId`
+
+Lets you run multiple apps against the same remote store without them overwriting each other's sessions:
+
+```javascript
+const clientA = new Client({
+  authStrategy: new RemoteAuth({
+    store: myStore,
+    clientId: 'app-a',
+  }),
+})
+
+const clientB = new Client({
+  authStrategy: new RemoteAuth({
+    store: myStore,
+    clientId: 'app-b',
+  }),
+})
+```
+
+### Session Lifecycle Events
+
+```javascript
+client.on('remote_session_saved', () => {
+  console.log('Session backed up to remote store')
+})
+
+client.on('disconnected', reason => {
+  console.log('Disconnected:', reason)
+  // Re-initialize or exit depending on your strategy
+})
+```
+
+### Best Practices
+
+- Store database credentials in environment variables, never in source code
+- Set `backupSyncIntervalMs` low enough that a crash won't lose too much session state
+- Handle `disconnected` to restart or alert on unexpected disconnections

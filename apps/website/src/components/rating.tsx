@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 
 import { cn } from '@/lib/utils'
 import { submitRating } from '@/app/actions/rating'
+import { Button } from '@/components/ui/button'
 
 import FaceSad from 'public/icons/rating/face-sad.svg'
 import FaceUnhappy from 'public/icons/rating/face-unhappy.svg'
@@ -35,16 +36,16 @@ export function PageRating({ pageUrl }: { pageUrl: string }) {
     <div className="inline-flex h-9 items-center gap-0.5 rounded-lg border border-border bg-background px-2">
       <span className="select-none px-1.5 text-sm text-muted-foreground">Was this helpful?</span>
       {faces.map(({ value, label, Icon }) => (
-        <button
+        <Button
           key={value}
           type="button"
+          variant="ghost"
+          size="icon"
           aria-label={label}
           aria-pressed={selected === value}
           onClick={() => handleSelect(value)}
           className={cn(
-            'inline-flex size-7 items-center justify-center rounded-md border border-transparent bg-clip-padding transition-all outline-none select-none',
-            'text-muted-foreground hover:bg-muted hover:text-foreground',
-            'focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50',
+            'size-7 border border-transparent rounded-md bg-clip-padding select-none text-muted-foreground',
             selected === value && 'bg-muted text-foreground'
           )}
         >
@@ -53,7 +54,7 @@ export function PageRating({ pageUrl }: { pageUrl: string }) {
           ) : (
             <Icon className="size-3.5" />
           )}
-        </button>
+        </Button>
       ))}
     </div>
   )

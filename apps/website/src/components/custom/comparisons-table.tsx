@@ -1,57 +1,172 @@
-import { Badge } from '@/components/ui/badge'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+'use client'
 
-const badgeClass = {
-  green: 'border-transparent bg-green-100 text-green-800 dark:bg-lime-400 dark:text-black',
-  orange: 'border-transparent bg-orange-100 text-orange-800 dark:bg-orange-400 dark:text-black',
-  red: 'border-transparent bg-red-100 text-red-800 dark:bg-red-500 dark:text-black',
+import { useState } from 'react'
+import { type ColumnDef } from '@tanstack/react-table'
+import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react'
+
+import { Button } from '@/components/ui/button'
+import { DataTable, type MenuItem } from '@/components/ui/data-table'
+
+const dotColor = {
+  green: 'bg-emerald-500',
+  orange: 'bg-amber-500',
+  red: 'bg-red-500',
 }
 
 export type CellValue = string | { text: string; badge: 'green' | 'orange' | 'red' }
 
-export type ComparisonRow = {
-  label: string
-  cells: CellValue[]
+export type FeatureRow = {
+  feature: string
+  wwebjs: CellValue
+  baileys: CellValue
+  wppConnect: CellValue
+  whatsappApi: CellValue
 }
 
-type ComparisonsTableProps = {
-  columns: string[]
-  rows: ComparisonRow[]
+function cellText(value: CellValue): string {
+  return typeof value === 'string' ? value : value.text
 }
 
-function renderCell(cell: CellValue) {
-  if (typeof cell === 'string') return cell
-  return <Badge className={badgeClass[cell.badge]}>{cell.text}</Badge>
+function toMarkdown(rows: FeatureRow[]): string {
+  const headers = ['Feature', 'whatsapp-web.js', 'Baileys', 'WPPConnect', 'WhatsApp API']
+  const sep = headers.map(() => '---')
+  const body = rows.map(row => [
+    row.feature,
+    cellText(row.wwebjs),
+    cellText(row.baileys),
+    cellText(row.wppConnect),
+    cellText(row.whatsappApi),
+  ])
+  return [headers, sep, ...body].map(row => `| ${row.join(' | ')} |`).join('\n')
 }
 
-export function ComparisonsTable({ columns, rows }: ComparisonsTableProps) {
+function toCSV(rows: FeatureRow[]): string {
+  const headers = ['Feature', 'whatsapp-web.js', 'Baileys', 'WPPConnect', 'WhatsApp API']
+  const body = rows.map(row => [
+    row.feature,
+    cellText(row.wwebjs),
+    cellText(row.baileys),
+    cellText(row.wppConnect),
+    cellText(row.whatsappApi),
+  ])
+  return [headers, ...body].map(row => row.map(v => `"${v}"`).join(',')).join('\n')
+}
+
+function renderCell(value: CellValue) {
+  if (typeof value === 'string') return value || null
   return (
-    <Table className="[&_th]:whitespace-normal [&_td]:whitespace-normal [&_th]:text-xs [&_td]:text-xs [&_th]:border-x-0 [&_th]:border-t-0 [&_td]:border-x-0 [&_td]:border-t-0 [&_td]:bg-white dark:[&_td]:bg-[#0a0a0a] [&_th]:bg-gray-50 dark:[&_th]:bg-[#161616]">
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-40">Feature</TableHead>
-          {columns.map(col => (
-            <TableHead key={col}>{col}</TableHead>
-          ))}
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {rows.map(row => (
-          <TableRow key={row.label}>
-            <TableCell className="font-medium text-muted-foreground">{row.label}</TableCell>
-            {row.cells.map((cell, i) => (
-              <TableCell key={i}>{renderCell(cell)}</TableCell>
-            ))}
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <span className="inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-xs font-medium">
+      <span className={`size-1.5 shrink-0 rounded-full ${dotColor[value.badge]}`} />
+      {value.text}
+    </span>
+  )
+}
+
+const OTHER_LIBS = ['baileys', 'wppConnect', 'whatsappApi'] as const
+type LibId = 'wwebjs' | (typeof OTHER_LIBS)[number]
+
+const featureColumn: ColumnDef<FeatureRow> = {
+  accessorKey: 'feature',
+  header: 'Feature',
+  enableHiding: false,
+  cell: ({ getValue }) => <span className="font-medium text-foreground">{getValue<string>()}</span>,
+  sortingFn: 'alphanumeric',
+}
+
+const libraryColumnMap: Record<LibId, ColumnDef<FeatureRow>> = {
+  wwebjs: {
+    accessorKey: 'wwebjs',
+    header: 'whatsapp-web.js',
+    enableSorting: false,
+    enableHiding: false,
+    cell: ({ getValue }) => renderCell(getValue<CellValue>()),
+  },
+  baileys: {
+    accessorKey: 'baileys',
+    header: 'Baileys',
+    enableSorting: false,
+    enableHiding: false,
+    cell: ({ getValue }) => renderCell(getValue<CellValue>()),
+  },
+  wppConnect: {
+    accessorKey: 'wppConnect',
+    header: 'WPPConnect',
+    enableSorting: false,
+    enableHiding: false,
+    cell: ({ getValue }) => renderCell(getValue<CellValue>()),
+  },
+  whatsappApi: {
+    accessorKey: 'whatsappApi',
+    header: 'WhatsApp API',
+    enableSorting: false,
+    enableHiding: false,
+    cell: ({ getValue }) => renderCell(getValue<CellValue>()),
+  },
+}
+
+const description =
+  'You can use this list to compare features from other libraries with whatsapp-web.js. '
+
+export function ComparisonsTable({ rows }: { rows: FeatureRow[] }) {
+  const [columnPage, setColumnPage] = useState(0)
+
+  const maxPage = OTHER_LIBS.length - 1
+  const currentColumns = [
+    featureColumn,
+    libraryColumnMap.wwebjs,
+    libraryColumnMap[OTHER_LIBS[columnPage]],
+  ]
+
+  const menuItems: MenuItem[] = [
+    {
+      label: 'Copy as Markdown',
+      onSelect: () => navigator.clipboard.writeText(toMarkdown(rows)).catch(() => {}),
+    },
+    {
+      label: 'Copy as CSV',
+      onSelect: () => navigator.clipboard.writeText(toCSV(rows)).catch(() => {}),
+      separator: true,
+    },
+  ]
+
+  const footer = (
+    <div className="flex items-center justify-between px-4 py-3 md:px-6">
+      <Button
+        variant="outline"
+        size="sm"
+        disabled={columnPage === 0}
+        onClick={() => setColumnPage(currentPage => currentPage - 1)}
+        className="gap-1.5"
+      >
+        <IconChevronLeft className="size-3.5" />
+        Previous
+      </Button>
+      <span className="text-xs text-muted-foreground">
+        {columnPage + 1} / {maxPage + 1}
+      </span>
+      <Button
+        variant="outline"
+        size="sm"
+        disabled={columnPage >= maxPage}
+        onClick={() => setColumnPage(currentPage => currentPage + 1)}
+        className="gap-1.5"
+      >
+        Next
+        <IconChevronRight className="size-3.5" />
+      </Button>
+    </div>
+  )
+
+  return (
+    <div className="[&_table]:table-fixed [&_th:first-child]:w-[35%] [&_th:nth-child(2)]:w-[32%] [&_th:nth-child(3)]:w-[33%]">
+      <DataTable
+        columns={currentColumns}
+        data={rows}
+        title="Feature Comparison"
+        description={description}
+        menuItems={menuItems}
+        footer={footer}
+      />
+    </div>
   )
 }

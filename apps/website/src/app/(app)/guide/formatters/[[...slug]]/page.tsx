@@ -30,28 +30,35 @@ export default async function Page(props: PageProps<'/guide/formatters/[[...slug
   const page = formatterSource.getPage(params.slug)
   if (!page) notFound()
 
-  const raw = (await page.data.getText?.('raw')) ?? ''
+  const data = page.data as typeof page.data & {
+    body?: Parameters<typeof GuidePageContent>[0]['MDX']
+    getText?: (type: string) => Promise<string>
+    lastModified?: Date
+    toc?: Parameters<typeof GuidePageContent>[0]['toc']
+    badges?: string[]
+  }
+
+  const raw = (await data.getText?.('raw')) ?? ''
   const lastModified = await getGithubLastEdit({
     owner: 'wwebjs',
     repo: 'wwebjs',
     path: `apps/website/${page.path}`,
     token: process.env.GITHUB_TOKEN,
-  }).catch(() => page.data.lastModified)
+  }).catch(() => data.lastModified)
 
   return (
     <GuidePageContent
-      title={page.data.title}
+      title={page.data.title ?? ''}
       description={page.data.description}
-      notice={page.data.notice}
-      toc={page.data.toc}
+      toc={data.toc ?? []}
       breadcrumbs={getPageCrumbs(formatterSource.pageTree, page.url, getSectionCrumb('formatters'))}
       neighbours={findNeighbour(formatterSource.pageTree, page.url)}
       lastModified={lastModified ?? undefined}
-      badges={page.data.badges}
+      badges={data.badges}
       markdownUrl={`/llms.mdx${page.url}`}
       page={raw}
       url={`https://wwebjs.dev${page.url}`}
-      MDX={page.data.body}
+      MDX={data.body!}
     />
   )
 }
