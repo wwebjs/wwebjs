@@ -37,7 +37,7 @@
     "@clack/prompts": "^0.9.1",
     "commander": "^13.1.0",
     "picocolors": "^1.1.1",
-    "tinyexec": "^1.0.4"
+    "tinyexec": "^1.1.2"
   },
   "devDependencies": {
     "tsup": "^8.5.0",
